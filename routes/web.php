@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\ArsipController;
 use App\Http\Controllers\Admin\DisposisiController;
 use App\Http\Controllers\Admin\IncomingController;
 use App\Http\Controllers\LoginController;
@@ -69,16 +70,16 @@ Route::prefix('admin')->middleware('authAdmin')->group(function () {
     Route::get('/surat-keluar/{id}/reject', [OutgoingController::class, 'reject'])->name('reject');
     Route::get('/surat-keluar/download/{id}', [OutgoingController::class, 'download_surat_keluar'])->name('download-surat-keluar-admin');
     Route::get('surat-keluar/{id}/arsipkan', [OutgoingController::class, 'arsipkan']);
-    Route::get('/surat-keluar/arsip', [OutgoingController::class, 'arsip'])->name('arsip-keluar');
 
     Route::resource('/disposisi', DisposisiController::class);
 
     //print
     Route::get('/print/surat-masuk', [PrintController::class, 'index']);
     Route::get('/print/surat-keluar', [PrintController::class, 'outgoing'])->name('print-surat-keluar');
-
+    //arsip
+    Route::get('/arsip', [ArsipController::class, 'index']);
+    //user
     Route::resource('/user', UserController::class);
-    Route::get('/arsip', [OutgoingController::class, 'arsip'])->name('arsip-keluar');
     Route::resource('/setting', SettingController::class, [
         'except' => ['show']
     ]);
@@ -106,7 +107,9 @@ Route::prefix('kepsek')->middleware('authKepsek')->group(function () {
     //print
     Route::get('print/surat-masuk', [PrintController::class, 'index']);
     Route::get('print/surat-keluar', [PrintController::class, 'outgoing'])->name('print-surat-keluar');
-
+    //arsip
+    Route::get('/arsip', [ArsipController::class, 'index']);
+    //user
     Route::resource('user', UserController::class);
     Route::resource('setting', SettingController::class, [
         'except' => ['show']
@@ -133,7 +136,9 @@ Route::prefix('guru')->middleware('authGuru')->group(function () {
     //print
     Route::get('print/surat-masuk', [PrintController::class, 'index']);
     Route::get('print/surat-keluar', [PrintController::class, 'outgoing'])->name('print-surat-keluar');
-
+    //arsip
+    Route::get('/arsip', [ArsipController::class, 'index']);
+    //user
     Route::resource('user', UserController::class);
     Route::resource('setting', SettingController::class, [
         'except' => ['show']
@@ -171,7 +176,9 @@ Route::prefix('staff')->middleware('authStaff')->group(function () {
     //print
     Route::get('print/surat-masuk', [PrintController::class, 'index'])->name('print-surat-masuk');
     Route::get('print/surat-keluar', [PrintController::class, 'outgoing'])->name('print-surat-keluar');
-
+    //arsip
+    Route::get('/arsip', [ArsipController::class, 'index']);
+    //user
     Route::resource('user', UserController::class);
     Route::resource('setting', SettingController::class, [
         'except' => ['show']

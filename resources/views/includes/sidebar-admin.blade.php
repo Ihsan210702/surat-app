@@ -57,12 +57,6 @@
                     <div class="nav-link-icon"><i data-feather="folder"></i></div>
                     Arsip
                 </a>
-
-                {{-- <a class="nav-link {{ request()->is('admin/setting*') ? 'active' : '' }}"
-                    href="{{ url('admin/setting') }}">
-                    <div class="nav-link-icon"><i data-feather="settings"></i></div>
-                    Profile
-                </a> --}}
             @endif
             <!-- Sidenav Link (Dashboard)-->
 
@@ -83,7 +77,11 @@
                     <div class="nav-link-icon"><i data-feather="arrow-left"></i></div>
                     Surat Keluar
                 </a>
-
+                <a class="nav-link {{ request()->is('staff/arsip') ? 'active' : '' }}"
+                    href="{{ url('staff/arsip') }}">
+                    <div class="nav-link-icon"><i data-feather="folder"></i></div>
+                    Arsip
+                </a>
             @endif
 
             @if (Auth::user()->role == 'kepsek')
@@ -109,6 +107,11 @@
                     <div class="nav-link-icon"><i data-feather="arrow-left"></i></div>
                     Surat Keluar
                 </a>
+                <a class="nav-link {{ request()->is('kepsek/arsip') ? 'active' : '' }}"
+                    href="{{ url('kepsek/arsip') }}">
+                    <div class="nav-link-icon"><i data-feather="folder"></i></div>
+                    Arsip
+                </a>
             @endif
 
             @if (Auth::user()->role == 'guru')
@@ -127,6 +130,11 @@
                     href="{{ url('guru/surat-keluar') }}">
                     <div class="nav-link-icon"><i data-feather="arrow-left"></i></div>
                     Surat Keluar
+                </a>
+                <a class="nav-link {{ request()->is('guru/arsip') ? 'active' : '' }}"
+                    href="{{ url('guru/arsip') }}">
+                    <div class="nav-link-icon"><i data-feather="folder"></i></div>
+                    Arsip
                 </a>
             @endif
 

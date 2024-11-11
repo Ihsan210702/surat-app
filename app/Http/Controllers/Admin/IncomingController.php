@@ -378,52 +378,7 @@ class IncomingController extends Controller
             ->with('success', 'Surat sudah diterima dan dibaca');
     }
 
-    public function arsip()
-    {
-        if (request()->ajax()) {
-            $query = Letter::with(['department', 'sender'])->where('status', '!=', 'diproses')->latest()->get();
-
-            return Datatables::of($query)
-                ->addColumn('action', function ($item) {
-                    $rolePrefix = [
-                        'admin' => 'admin',
-                        'guru' => 'guru',
-                        'staff' => 'staff',
-                        'kepala sekolah' => 'kepala-sekolah'
-                    ];
-
-                    $prefix = $rolePrefix[Session('user')['role']] ?? 'default'; // default jika role tidak dikenali
-
-                    return '
-                       
-
-<a class="btn btn-success btn-xs" href="' . url($prefix . '/letter/surat', $item->id) . ' ">
-                            <i class="fa fa-search-plus"></i> &nbsp; Detail
-                        </a>
-                        <a class="btn btn-primary btn-xs" href="' . route('letter.edit', $item->id) . '">
-                            <i class="fas fa-edit"></i> &nbsp; Ubah
-                        </a>
-                        <form action="' . route('letter.destroy', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan menghapus item ini dari situs anda?'" . ')">
-                            ' . method_field('delete') . csrf_field() . '
-                            <button class="btn btn-danger btn-xs">
-                                <i class="far fa-trash-alt"></i> &nbsp; Hapus
-                            </button>
-                        </form>
-                    ';
-                })
-                ->editColumn('post_status', function ($item) {
-                    return $item->post_status == 'Published' ? '<div class="badge bg-green-soft text-green">' . $item->post_status . '</div>' : '<div class="badge bg-gray-200 text-dark">' . $item->post_status . '</div>';
-                })
-                ->addIndexColumn()
-                ->removeColumn('id')
-                ->rawColumns(['action', 'post_status'])
-                ->make();
-        }
-
-        return view('pages.admin.letter.arsip');
-    }
-
-    
+  
 
     
 }
