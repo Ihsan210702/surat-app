@@ -28,16 +28,16 @@
                         <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">List Surat Masuk</h5>
                             <div>
-                                @if (Session('user')['role'] == 'admin' || Session('user')['role'] == 'staff administrasi')
-                                <a class="btn btn-sm btn-success" href="{{ route('surat-masuk-create') }}">
+                                @if (auth()->user()->role == 'admin' || auth()->user()->role == 'staff')
+                                <a class="btn btn-sm btn-success" href="{{ url(auth()->user()->role.'/surat-masuk/create') }}">
                                     <i data-feather="plus"></i> &nbsp;
                                     Tambah Surat Masuk
                                 </a>
                                 @endif
-                                <a class="btn btn-sm btn-primary" href="{{ route('print-surat-masuk') }}" target="_blank">
+                                <!-- <a class="btn btn-sm btn-primary" href="{{ url(auth()->user()->role.'/print/surat-masuk') }}" target="_blank">
                                     <i data-feather="printer"></i> &nbsp;
                                     Cetak Laporan
-                                </a>
+                                </a> -->
                             </div>
                         </div>
                         <div class="card-body">
@@ -63,6 +63,7 @@
                                 <thead>
                                     <tr>
                                         <th width="10">No.</th>
+                                        <th>Status</th>
                                         <th>No. Surat</th>
                                         <th>Tanggal Surat</th>
                                         <th>Pengirim</th>
@@ -95,6 +96,7 @@
             orderable: false, 
             searchable: false
           },
+          { data: 'status', name: 'status' },
           { data: 'no_surat', name: 'no_surat' },
           { data: 'tanggal_surat', name: 'tanggal_surat' },
           { data: 'pengirim', name: 'pengirim' },

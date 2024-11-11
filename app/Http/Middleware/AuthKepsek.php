@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class AuthKepsek
 {
@@ -16,14 +18,12 @@ class AuthKepsek
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($request->session()->get('user')) {
-
-            if ($request->session()->get('user')['role'] == 'kepala sekolah') {
-                return $next($request);
-            } else {
-                return redirect('login')->with('failed', 'Akses ditolak ! Anda bukan Kepala Sekolah.');
-            }
+        // Periksa apakah pengguna sudah login dan memiliki peran 'admin'
+        if (Auth::check() && Auth::user()->role === 'kepsek') {
+            return $next($request);
         }
-        return redirect('login')->with('failed', 'Akses ditolak ! Anda bukan Kepala Sekolah.');
+
+        // Jika tidak login atau bukan admin, arahkan kembali ke halaman login
+        return redirect('login')->with('failed', 'Akses ditolak! Anda bukan Kepala Sekolah.');
     }
 }

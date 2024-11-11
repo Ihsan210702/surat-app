@@ -4,6 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class AuthStaff
 {
@@ -16,14 +18,12 @@ class AuthStaff
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($request->session()->get('user')) {
-
-            if ($request->session()->get('user')['role'] == 'staff administrasi') {
-                return $next($request);
-            } else {
-                return redirect('login')->with('failed', 'Akses ditolak ! Anda bukan Staff Administrasi.');
-            }
+        // Periksa apakah pengguna sudah login dan memiliki peran 'admin'
+        if (Auth::check() && Auth::user()->role === 'staff') {
+            return $next($request);
         }
-        return redirect('login')->with('failed', 'Akses ditolak ! Anda bukan Staff Administrasi.');
+
+        // Jika tidak login atau bukan admin, arahkan kembali ke halaman login
+        return redirect('login')->with('failed', 'Akses ditolak! Anda bukan Staff Administrasi.');
     }
 }

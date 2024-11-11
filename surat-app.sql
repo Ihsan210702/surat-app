@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.4
+-- version 5.1.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 05, 2022 at 10:09 AM
--- Server version: 10.4.17-MariaDB
--- PHP Version: 7.3.27
+-- Waktu pembuatan: 11 Nov 2024 pada 01.49
+-- Versi server: 10.4.22-MariaDB
+-- Versi PHP: 8.2.24
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,27 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `departments`
---
-
-CREATE TABLE `departments` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `departments`
---
-
-INSERT INTO `departments` (`id`, `name`, `created_at`, `updated_at`) VALUES
-(1, 'Administrasi', '2022-01-03 06:44:22', '2022-01-03 06:44:22');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `failed_jobs`
+-- Struktur dari tabel `failed_jobs`
 --
 
 CREATE TABLE `failed_jobs` (
@@ -60,35 +40,39 @@ CREATE TABLE `failed_jobs` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `letters`
+-- Struktur dari tabel `incoming_mails`
 --
 
-CREATE TABLE `letters` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `letter_no` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `letter_date` date NOT NULL,
-  `date_received` date NOT NULL,
-  `regarding` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `department_id` bigint(20) UNSIGNED NOT NULL,
-  `sender_id` bigint(20) UNSIGNED NOT NULL,
-  `letter_file` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `letter_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+CREATE TABLE `incoming_mails` (
+  `id` int(11) NOT NULL,
+  `no_surat` varchar(255) NOT NULL,
+  `tanggal_surat` date NOT NULL,
+  `pengirim` varchar(255) NOT NULL,
+  `jenis_surat` varchar(255) NOT NULL,
+  `tanggal_diterima` date NOT NULL,
+  `perihal` varchar(255) NOT NULL,
+  `status_surat` enum('Asli','Tembusan') NOT NULL,
+  `file_surat` varchar(255) NOT NULL,
+  `status` int(11) NOT NULL,
+  `tujuan_disposisi` varchar(255) NOT NULL,
+  `catatan_disposisi` varchar(255) NOT NULL,
+  `status_disposisi` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `letters`
+-- Dumping data untuk tabel `incoming_mails`
 --
 
-INSERT INTO `letters` (`id`, `letter_no`, `letter_date`, `date_received`, `regarding`, `department_id`, `sender_id`, `letter_file`, `letter_type`, `created_at`, `updated_at`) VALUES
-(1, '283/PL18.8/LT/2018', '2018-09-17', '2018-09-20', 'Undangan Seminar Kekayaan Intelektual', 1, 1, 'assets/letter-file/7kc7xqqKS9Yw5XmAaksGxY9UydKuCyf3AOL06MMm.pdf', 'Surat Masuk', '2022-01-03 06:46:29', '2022-01-03 06:46:29'),
-(2, '002/RM/XI/2021', '2021-11-12', '2021-11-15', 'Peringatan Maulid Nabi Muhammad SAW', 1, 2, 'assets/letter-file/GLCG87pU2iNBM1UmN2RVprbJZmbgMOKn9Od9Wr3g.pdf', 'Surat Keluar', '2022-01-03 06:50:53', '2022-01-03 06:50:53');
+INSERT INTO `incoming_mails` (`id`, `no_surat`, `tanggal_surat`, `pengirim`, `jenis_surat`, `tanggal_diterima`, `perihal`, `status_surat`, `file_surat`, `status`, `tujuan_disposisi`, `catatan_disposisi`, `status_disposisi`, `created_at`, `updated_at`) VALUES
+(2, '40/B/23/4/2024', '2024-11-06', 'Dinas Pariwisata', 'Surat Permohonan', '2024-11-09', 'Kunjungan ke Sekolah', 'Tembusan', 'public/surat-masuk/EeRaaVj4xicu7nOwt8DYEgB96OWIg1BHPANLcU91.pdf', 3, '[\"6\"]', 'bagus', 1, '2024-11-06 05:12:01', '2024-11-08 18:42:11'),
+(4, '420/B/131.242/2024', '2024-11-07', 'Kecamatan Ganding', 'Surat Permohonan', '2024-11-09', 'Pemberdayaan Manusia', 'Asli', 'public/surat-masuk/VnsbXxfFm6rdun884fQXSJhvLOD1ZN9w5C8lpNB3.pdf', 3, '[\"3\"]', 'Sudah bagus mantap', 3, '2024-11-09 05:23:19', '2024-11-10 17:32:41');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `migrations`
+-- Struktur dari tabel `migrations`
 --
 
 CREATE TABLE `migrations` (
@@ -98,7 +82,7 @@ CREATE TABLE `migrations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `migrations`
+-- Dumping data untuk tabel `migrations`
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
@@ -113,7 +97,50 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `password_resets`
+-- Struktur dari tabel `notifikasi`
+--
+
+CREATE TABLE `notifikasi` (
+  `id` int(11) NOT NULL,
+  `role` enum('Guru','Murid') NOT NULL,
+  `judul` varchar(100) NOT NULL,
+  `deskripsi` longtext DEFAULT NULL,
+  `is_seen` enum('Y','N') NOT NULL,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `outgoing_mails`
+--
+
+CREATE TABLE `outgoing_mails` (
+  `id` int(11) NOT NULL,
+  `no_surat` varchar(255) NOT NULL,
+  `tanggal_surat` date NOT NULL,
+  `tujuan` varchar(255) NOT NULL,
+  `jenis_surat` varchar(255) NOT NULL,
+  `perihal` varchar(255) NOT NULL,
+  `file_surat` varchar(255) NOT NULL,
+  `status` int(11) NOT NULL,
+  `catatan` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data untuk tabel `outgoing_mails`
+--
+
+INSERT INTO `outgoing_mails` (`id`, `no_surat`, `tanggal_surat`, `tujuan`, `jenis_surat`, `perihal`, `file_surat`, `status`, `catatan`, `created_at`, `updated_at`) VALUES
+(2, '420/B/131.242/2023', '2024-11-06', 'Dinas Pendidikan', 'Surat Lomba', 'Lomba Karaoke', 'public/surat-keluar/UEMkgOdwIaCapfWo7pRq7kwyzgv9ZhHUnofdb0dy.pdf', 4, 'langusng kirim segera', '2024-11-05 19:52:36', '2024-11-10 17:41:02');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `password_resets`
 --
 
 CREATE TABLE `password_resets` (
@@ -125,7 +152,7 @@ CREATE TABLE `password_resets` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `personal_access_tokens`
+-- Struktur dari tabel `personal_access_tokens`
 --
 
 CREATE TABLE `personal_access_tokens` (
@@ -143,37 +170,15 @@ CREATE TABLE `personal_access_tokens` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `senders`
---
-
-CREATE TABLE `senders` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `address` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `phone` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `senders`
---
-
-INSERT INTO `senders` (`id`, `name`, `address`, `phone`, `email`, `created_at`, `updated_at`) VALUES
-(1, 'Politeknik Negeri Banjarmasin', 'Jl. Brigjen H. Hasan Basri, Kayutangi, Banjarmasin 70123', '(0511) 3305052', 'poliban@poliban.ac.id', '2022-01-03 06:45:35', '2022-01-03 06:45:35'),
-(2, 'Karimu', 'Dusun Cikatomas RT 10 RW 03, Desa Gunungsari,\r\nKec. Sadananya, Kab. Ciamis, Jawa Barat 46256', '082317688174', 'karimu@gmail.com', '2022-01-03 06:49:49', '2022-01-03 06:49:49');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
+-- Struktur dari tabel `users`
 --
 
 CREATE TABLE `users` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `role` enum('admin','staff','guru','kepsek') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nip` int(100) DEFAULT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `profile` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -183,49 +188,61 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
--- Dumping data for table `users`
+-- Dumping data untuk tabel `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `profile`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'Aris Maulana', 'admin@gmail.com', NULL, '$2y$10$OZHdNDSPAstB9D65oiSineO2Tgyr3/kBqvPYbVHDLUAjyRf8vdTy6', NULL, NULL, '2022-01-03 00:21:03', '2022-01-03 00:21:03');
+INSERT INTO `users` (`id`, `name`, `email`, `role`, `nip`, `email_verified_at`, `password`, `profile`, `remember_token`, `created_at`, `updated_at`) VALUES
+(1, 'Aris Maulana', 'admin@gmail.com', 'admin', NULL, NULL, '$2y$10$OZHdNDSPAstB9D65oiSineO2Tgyr3/kBqvPYbVHDLUAjyRf8vdTy6', NULL, NULL, '2022-01-03 00:21:03', '2022-01-03 00:21:03'),
+(2, 'Staff TU', 'staff_tu@gmail.com', 'staff', NULL, NULL, '$2a$12$tj3nVW.PX1dkHuVeFhx7WuDhvU1DDOCVmgcHtr8dcf055zfirCemu', NULL, NULL, '2022-01-03 00:21:03', '2022-01-03 00:21:03'),
+(3, 'Guru', 'guru@gmail.com', 'guru', NULL, NULL, '$2a$12$GoYFbrpsr5tpJxuX1wCKI.PQ17iEQDunZFLFyv2wzYu5cbMJhlgk2', NULL, NULL, '2022-01-03 00:21:03', '2022-01-03 00:21:03'),
+(4, 'Kepala Sekolah', 'kepsek@gmail.com', 'kepsek', NULL, NULL, '$2a$12$hzousWiGg/8b7CD38Bz/TuGUSoN582z04Dzn35g4Dh5PRHq9hM/4y', NULL, NULL, '2022-01-03 00:21:03', '2022-01-03 00:21:03'),
+(5, 'testing', 'testing@gmail.com', 'admin', NULL, NULL, '$2y$10$i7WaCoHixFthCsQ3YiCWFeeb.B2RJzcZzAY4cCLUqXXBSaMmk5zKy', NULL, NULL, '2024-10-13 10:06:04', '2024-10-13 10:06:04'),
+(6, 'Syafaria', 'syafarian@gmail.com', 'guru', NULL, NULL, '$2y$10$rg4bj20zRDi6EzkcpJPaKOI7K4kPr1NFKKirekaZV42mpSbShjjYu', NULL, NULL, '2024-11-08 07:28:31', '2024-11-08 07:39:54');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `departments`
---
-ALTER TABLE `departments`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `failed_jobs`
+-- Indeks untuk tabel `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
 
 --
--- Indexes for table `letters`
+-- Indeks untuk tabel `incoming_mails`
 --
-ALTER TABLE `letters`
+ALTER TABLE `incoming_mails`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `migrations`
+-- Indeks untuk tabel `migrations`
 --
 ALTER TABLE `migrations`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `password_resets`
+-- Indeks untuk tabel `notifikasi`
+--
+ALTER TABLE `notifikasi`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`role`);
+
+--
+-- Indeks untuk tabel `outgoing_mails`
+--
+ALTER TABLE `outgoing_mails`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indeks untuk tabel `password_resets`
 --
 ALTER TABLE `password_resets`
   ADD KEY `password_resets_email_index` (`email`);
 
 --
--- Indexes for table `personal_access_tokens`
+-- Indeks untuk tabel `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
   ADD PRIMARY KEY (`id`),
@@ -233,63 +250,57 @@ ALTER TABLE `personal_access_tokens`
   ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
 
 --
--- Indexes for table `senders`
---
-ALTER TABLE `senders`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `users`
+-- Indeks untuk tabel `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `users_email_unique` (`email`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT untuk tabel yang dibuang
 --
 
 --
--- AUTO_INCREMENT for table `departments`
---
-ALTER TABLE `departments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `failed_jobs`
+-- AUTO_INCREMENT untuk tabel `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `letters`
+-- AUTO_INCREMENT untuk tabel `incoming_mails`
 --
-ALTER TABLE `letters`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+ALTER TABLE `incoming_mails`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `migrations`
+-- AUTO_INCREMENT untuk tabel `migrations`
 --
 ALTER TABLE `migrations`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- AUTO_INCREMENT for table `personal_access_tokens`
+-- AUTO_INCREMENT untuk tabel `notifikasi`
+--
+ALTER TABLE `notifikasi`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `outgoing_mails`
+--
+ALTER TABLE `outgoing_mails`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT untuk tabel `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `senders`
---
-ALTER TABLE `senders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `users`
+-- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -28,36 +28,37 @@
             <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage"
                 href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">
-                @if (Session('user')['profile'] != null)
+                @if (auth()->user()->profile != null)
                     <img class="img-fluid" src="{{ Storage::url(Auth::user()->profile) }}" />
                 @else
-                    <img class="img-fluid" src="https://ui-avatars.com/api/?name={{ Session('user')['name'] }}" />
+                    <img class="img-fluid" src="https://ui-avatars.com/api/?name={{ auth()->user()->name }}" />
                 @endif
             </a>
             <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up"
                 aria-labelledby="navbarDropdownUserImage">
                 <h6 class="dropdown-header d-flex align-items-center">
-                    @if (Session('user')['profile'] != null)
-                        <img class="dropdown-user-img" src="{{ Storage::url(Session('user')['profile']) }}" />
-                    @else
-                        <img class="dropdown-user-img"
-                            src="https://ui-avatars.com/api/?name={{ Session('user')['name'] }}" />
-                    @endif
+                @if (auth()->user()->profile != null)
+                    <img class="dropdown-user-img" src="{{ Storage::url(auth()->user()->profile) }}" />
+                @else
+                    <img class="dropdown-user-img" src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}" />
+                @endif
 
                     <div class="dropdown-user-details">
-                        <div class="dropdown-user-details-name">{{ Session('user')['name'] }}</div>
-                        <div class="dropdown-user-details-email">{{ Session('user')['email'] }}</div>
+                        <div class="dropdown-user-details-name">{{ auth()->user()->name }}</div>
+                        <div class="dropdown-user-details-email">{{ auth()->user()->email }}</div>
                     </div>
                 </h6>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item"
-                    @if (Session('user')['role'] == 'admin') href="{{ url('admin/setting') }}"
-                   @elseif (Session('user')['role'] == 'guru')
-                   href="{{ url('guru/setting') }}"
-                   @elseif (Session('user')['role'] == 'kepala sekolah')
-                   href="{{ url('kepala-sekolah/setting') }}"
-                   @elseif (Session('user')['role'] == 'staff administrasi')
-                   href="{{ url('staff/setting') }}" @endif>
+                @if (auth()->user()->role == 'admin')
+                    <a href="{{ url('admin/setting') }}">
+                @elseif (auth()->user()->role == 'guru')
+                    <a href="{{ url('guru/setting') }}">
+                @elseif (auth()->user()->role == 'kepsek')
+                    <a href="{{ url('kepala-sekolah/setting') }}">
+                @elseif (auth()->user()->role == 'staff')
+                    <a href="{{ url('staff/setting') }}">
+                @endif
                     <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
                     Account
                 </a>

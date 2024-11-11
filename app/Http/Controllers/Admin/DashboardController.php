@@ -5,14 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Models\Letter;
+use App\Models\Incoming;
+use App\Models\Outgoing;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $masuk = Letter::where('letter_type', 'Surat Masuk')->get()->count();
-        $keluar = Letter::where('letter_type', 'Surat Keluar')->get()->count();
+        $masuk = Incoming::get()->count();
+        $keluar = Outgoing::get()->count();
 
         return view('pages.admin.dashboard',[
             'masuk' => $masuk,

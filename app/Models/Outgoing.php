@@ -18,7 +18,8 @@ class Outgoing extends Model
         'jenis_surat',
         'perihal',
         'file_surat',
-        'status'
+        'status',
+        'catatan'
     ];
 
     protected $hidden = [];

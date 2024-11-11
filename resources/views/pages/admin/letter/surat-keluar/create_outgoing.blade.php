@@ -32,7 +32,7 @@
                     <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
-            <form action="{{ route('surat-keluar-store') }}" method="post" enctype="multipart/form-data">
+            <form action="{{ url(auth()->user()->role .'/surat-keluar/store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row gx-4">
                     <div class="col-lg-9">
@@ -108,6 +108,17 @@
                                     @enderror
                                 </div>
                                 <div class="mb-3 row">
+                                    <label for="file_surat" class="col-sm-3 col-form-label">Isi Surat</label>
+                                    <div class="col-sm-9">
+                                        <textarea id="editor"></textarea>
+                                    </div>
+                                    @error('file_Surat')
+                                        <div class="invalid-feedback">
+                                            {{ $message; }}
+                                        </div>
+                                    @enderror
+                                </div>
+                                <div class="mb-3 row">
                                     <label for="" class="col-sm-3 col-form-label"></label>
                                     <div class="col-sm-9">
                                         <button type="submit" class="btn btn-primary">Simpan</button>
@@ -129,9 +140,15 @@
 
 @push('addon-script')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/ckeditor.js"></script>
     <script>
         $(".selectx").select2({
             theme: "bootstrap-5"
+        });
+        ClassicEditor
+        .create(document.querySelector('#editor'))
+        .catch(error => {
+            console.error(error);
         });
     </script>
 @endpush

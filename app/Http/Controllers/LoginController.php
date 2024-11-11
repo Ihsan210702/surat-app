@@ -32,144 +32,71 @@ class LoginController extends Controller
     //     return back()->with('loginError', 'Login Failed!');
     // }
 
+    // LoginController.php
+
     public function login_action(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+        // Validasi login
+        $user = User::where('email', $request->email)->first();
 
-        if ($validator->fails()) {
-            $request->session()->flash('failed', 'Lengkapi isian form');
-            return redirect('login');
-        }
+        if ($user && Hash::check($request->password, $user->password)) {
+            // Set session user setelah login berhasil
+            Auth::login($user);
 
-        // $karyawan = Karyawan::where([
-        //     'email' => $request->email,
-        //     'password' => $request->password,
-        // ]);
-
-        // $check = $this->checkUser($request, $karyawan, 'Karyawan');
-        // if($check != null){
-        //     return $check;
-        // }
-
-        // $staf_hr = Pejabat_struktural::where([
-        //     'email' => $request->email,
-        //     'password' => $request->password,
-        // ]);
-
-        // $check = $this->checkUser($request, $staf_hr, 'pejabat-struktural');
-        // if($check != null){
-        //     return $check;
-        // }
-
-        // $pegawai = User::where([
-        //     'email' => $request->email,
-        //     'password' => $request->password,
-        // ])->with('divisi', 'jabatan')->first();
-        // if ($pegawai) {
-        //     // dd($pegawai);
-
-        //     $check = $this->checkUser($request, $pegawai, $pegawai->jabatan->nama);
-        //     // dd($check);
-
-        //     if ($check != null) {
-        //         return $check;
-        //     }
-        // }
-
-
-
-        $admin = User::where('email', $request->email)->first();
-        // dd($admin);
-        if ($admin && Hash::check($request->password, $admin->password)) {
-            // Password valid, lanjutkan proses login
-
-            // dd($admin);
-            if ($admin) {
-
-                $check = $this->checkUser($request, $admin, $admin->role);
-                if ($check != null) {
-                    return $check;
-                }
-
-                return redirect('/')->with('failed', 'Data User Tidak Ditemukan');
-            } else {
-
-                return redirect('/login')->with('failed', 'Data User Tidak Ditemukan');
+            // Mengarahkan berdasarkan role
+            switch ($user->role) {
+                case 'admin':
+                    return redirect()->route('admin-dashboard'); // Arahkan ke dashboard admin
+                case 'staff':
+                    return redirect()->route('staff-dashboard'); // Arahkan ke halaman untuk staff
+                case 'guru':
+                    return redirect()->route('guru-dashboard'); // Arahkan ke halaman untuk guru
+                case 'kepsek':
+                    return redirect()->route('kepala-sekolah-dashboard'); // Arahkan ke halaman kepala sekolah
+                default:
+                    return redirect()->route('home'); // Pengalihan default jika tidak ada role yang sesuai
             }
         } else {
-            // Email atau password salah
-            dd('Login gagal');
+            // Menangani kegagalan login
+            return back()->withErrors(['email' => 'Email atau password salah']);
         }
     }
 
     private function checkUser($request, $user, $role)
-    {
-        // Session::flush();
+{
+    if ($user) {  // Cek jika $user ada
 
-        if ($user->exists()) {
-            // dd($user);
+        // Menyusun data user untuk disimpan dalam sesi
+        $userData = [
+            'id' => $user->id ?? $user->id_admin,
+            'role' => $role,
+            'nama' => $user->name,
+            'profile' => $user->profile,
+            'email' => $user->email,
+            // 'divisi' => $user->divisi_id ?? null, // Jika ada
+        ];
 
-            // $user = $user->first()->toArray();
-            // unset($user['password']);
-            $user['role'] = $role;
-            $user['id'] = $user['id'] ?? $user['id_admin'];
-            $user['nama'] = $user['name'];
-            $user['profile'] = $user['profile'];
-            $user['email'] = $user['email'];
-            // $user['divisi'] = $user['divisi_id'] ?? null;
-            Session(['user' => $user]);
-            // dd($role);
-            switch ($role) {
-                case 'admin':
-                    return redirect('admin/dashboard');
-                    break;
+        // Simpan data user dalam sesi
+        session(['user' => $userData]);
 
-                case 'guru':
-                    return redirect('guru/dashboard');
-                    break;
-
-                case 'kepala sekolah':
-                    return redirect('kepala-sekolah/dashboard');
-                    break;
-
-                case 'staff administrasi':
-                    return redirect('staff/dashboard');
-                    break;
-
-                    // case 'Karyawan':
-                    //     return redirect('/karyawan/home');
-                    //     break;
-                    // case 'Kepala Bagian':
-                    //     return redirect('/kepala-bagian/home');
-                    //     break;
-
-                    // case 'Kepala Sub Bagian':
-                    //     return redirect('/kepala-sub-bagian/home');
-                    //     break;
-
-                    // case 'Direktur':
-                    //     return redirect('/direktur/home');
-                    //     break;
-
-                    //     // case 'Manager':
-                    //     //     return redirect('/pejabat-struktural/home');
-                    //     //     break;
-
-                    // case 'admin':
-                    //     return redirect('/admin/home');
-                    //     break;
-
-                default:
-                    return redirect('/')->with('failed', 'Data User Tidak Ditemukan');
-                    break;
-            }
-        } else {
-            return null;
+        // Redirect berdasarkan peran
+        switch ($role) {
+            case 'admin':
+                return redirect('admin/dashboard');
+            case 'guru':
+                return redirect('guru/dashboard');
+            case 'kepala sekolah':
+                return redirect('kepala-sekolah/dashboard');
+            case 'staff administrasi':
+                return redirect('staff/dashboard');
+            default:
+                return redirect('/')->with('failed', 'Data User Tidak Ditemukan');
         }
+    } else {
+        return null; // Jika tidak ditemukan user, kembalikan null
     }
+}
+
     public function logout(Request $request)
     {
         Auth::logout();

@@ -32,7 +32,7 @@
                     <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
-            <form action="{{ route('surat-masuk-store') }}" method="post" enctype="multipart/form-data">
+            <form action="{{ url(auth()->user()->role .'/surat-masuk/store') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row gx-4">
                     <div class="col-lg-9">

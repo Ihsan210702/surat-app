@@ -28,12 +28,12 @@ class UserController extends Controller
                         'kepala sekolah' => 'kepala-sekolah'
                     ];
 
-                    $prefix = $rolePrefix[Session('user')['role']] ?? 'default'; // default jika role tidak dikenali
+                    $prefix = $rolePrefix[auth()->user()->role] ?? 'default'; // default jika role tidak dikenali
                     return '
                         <a class="btn btn-primary btn-xs" href="' .  url($prefix . '/user/' . $item->id . '/edit') .  '">
                             <i class="fas fa-edit"></i> &nbsp; Ubah
                         </a>
-                        <form action="' . route('user.destroy', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan menghapus item ini secara permanen dari situs anda?'" . ')">
+                        <form action="' . url($prefix . '/user/' . $item->id . '/destroy') . '" method="POST" onsubmit="return confirm(' . "'Anda akan menghapus item ini secara permanen dari situs anda?'" . ')">
                             ' . method_field('delete') . csrf_field() . '
                             <button class="btn btn-danger btn-xs">
                                 <i class="far fa-trash-alt"></i> &nbsp; Hapus
@@ -80,7 +80,7 @@ class UserController extends Controller
         User::create($validatedData);
 
         return redirect()
-            ->route('user.index')
+            ->to('/' . auth()->user()->role . '/user')
             ->with('success', 'Sukses! Data Pengguna Berhasil Disimpan');
     }
 
@@ -120,7 +120,7 @@ class UserController extends Controller
         $item->update($validatedData);
 
         return redirect()
-            ->route('user.index')
+            ->to('/' . auth()->user()->role . '/user')
             ->with('success', 'Sukses! Data Pengguna telah diperbarui');
     }
 
@@ -133,7 +133,7 @@ class UserController extends Controller
         $item->delete();
 
         return redirect()
-            ->route('user.index')
+            ->to('/' . auth()->user()->role . '/user')
             ->with('success', 'Sukses! Data Pengguna telah dihapus');
     }
 
@@ -156,7 +156,7 @@ class UserController extends Controller
         $item->save();
 
         return redirect()
-            ->route('user.index')
+            ->to('/' . auth()->user()->role . '/user')
             ->with('success', 'Sukses! Photo Pengguna telah diperbarui');
     }
 

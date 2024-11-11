@@ -4,26 +4,24 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthGuru
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
-     * @return mixed
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($request->session()->get('user')) {
-
-            if ($request->session()->get('user')['role'] == 'guru') {
-                return $next($request);
-            } else {
-                return redirect('login')->with('failed', 'Akses ditolak ! Anda bukan Guru.');
-            }
+        // Periksa apakah pengguna sudah login dan memiliki peran 'admin'
+        if (Auth::check() && Auth::user()->role === 'guru') {
+            return $next($request);
         }
-        return redirect('login')->with('failed', 'Akses ditolak ! Anda bukan Guru.');
+
+        // Jika tidak login atau bukan admin, arahkan kembali ke halaman login
+        return redirect('login')->with('failed', 'Akses ditolak! Anda bukan Guru.');
     }
 }

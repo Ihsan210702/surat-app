@@ -17,7 +17,7 @@
                             </h1>
                         </div>
                         <div class="col-12 col-xl-auto mb-3">
-                            <a class="btn btn-sm btn-light text-primary" href="{{ route('surat-masuk') }}">
+                            <a class="btn btn-sm btn-light text-primary" href="{{ url(auth()->user()->role .'/surat-masuk') }}">
                                 <i class="me-1" data-feather="arrow-left"></i>
                                 Kembali Ke Semua Surat
                             </a>
@@ -35,21 +35,16 @@
                             <div>Detail Surat
                             </div>
                             <div class="d-flex gap-2">
-                            @if ($item->status == '1')
-                                <a href="{{ route('approve', $item->id) }}" class="btn btn-sm btn-success">
-                                    <i class="fa fa-check" aria-hidden="true"></i> &nbsp; Setujui
-                                </a>
-                                <a href="{{ route('reject', $item->id) }}" class="btn btn-sm btn-danger">
-                                    <i class="fa fa-times" aria-hidden="true"></i> &nbsp; Tolak
-                                </a>
-                            @elseif ($item->status == '2')
-                                <span class="btn btn-sm btn-info text-capitalize">
-                                    Surat Telah Disetujui KTU
-                                </span>
-                            @else
-                                <span class="btn btn-sm btn-info text-capitalize">
-                                    Surat Telah {{ $item->status == '3' ? 'Ditolak' : $item->status }}
-                                </span>
+                            @if (auth()->user()->role == 'admin')
+                                @if ($item->status == '1' || $item->status_disposisi == '-1')
+                                    <a href="{{ url(auth()->user()->role . '/surat-masuk/' . $item->id . '/approve') }}" class="btn btn-sm btn-success">
+                                        <i class="fa fa-check" aria-hidden="true"></i> &nbsp; Teruskan ke Kepala
+                                    </a>
+                                    <!-- <a href="{{ url(auth()->user()->role . '/surat-masuk/' . $item->id . '/reject') }}" class="btn btn-sm btn-danger">
+                                        <i class="fa fa-times" aria-hidden="true"></i> &nbsp; Tolak
+                                    </a> -->
+                                <!--  -->
+                                @endif
                             @endif
                             </div>
                         </div>
@@ -75,6 +70,10 @@
                                             <td>{{ $item->pengirim }}</td>
                                         </tr>
                                         <tr>
+                                            <th>Jenis Surat</th>
+                                            <td>{{ $item->jenis_surat }}</td>
+                                        </tr>
+                                        <tr>
                                             <th>Perihal</th>
                                             <td>{{ $item->perihal }}</td>
                                         </tr>
@@ -82,7 +81,91 @@
                                             <th>Status Surat</th>
                                             <td>{{ $item->status_surat }}</td>
                                         </tr>
-                                        
+                                        <tr>
+                                        <tr>
+                                            <th id="disposisi">Disposisi</th>
+                                            <td id="disposisiText">
+                                                @if ($item->tujuan_disposisi == '')
+                                                    <i>Belum ada tujuan disposisi</i>
+                                                @else
+                                                    @php
+                                                        // Mendekode tujuan_disposisi ke dalam array
+                                                        $tujuanDisposisiIds = json_decode($item->tujuan_disposisi ?? '[]');
+                                                    @endphp
+
+                                                    {{-- Loop melalui $guru dan tampilkan nama jika ID ada dalam tujuan_disposisi --}}
+                                                    {{ implode(', ', $guru->whereIn('id', $tujuanDisposisiIds)->pluck('name')->toArray()) }}
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th id="catatan">Catatan</th>
+                                            <td id="catatanText">
+                                                @if ($item->catatan_disposisi == '')
+                                                    <i>Belum ada catatan disposisi</i>
+                                                @else
+                                                    {{ $item->catatan_disposisi }}
+                                                @endif
+                                            </td>
+                                        </tr>
+
+                                        @if (auth()->user()->role == 'kepsek' && $item->status == '2' && $item->status_disposisi == '0')
+                                        <tr>
+                                            <th></th>
+                                            <td>
+                                                <!-- Tombol untuk memilih apakah akan disposisikan atau ditolak -->
+                                                <button type="button" class="btn btn-success" id="disposisiBtn">Disposisikan</button>
+                                                <button type="button" class="btn btn-danger" id="tolakBtn">Tolak</button>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Form Disposisi -->
+                                        <tr id="disposisiForm" style="display:none;">
+                                            <th>Disposisikan ke </th>
+                                            <td>
+                                                <form action="{{ url(auth()->user()->role . '/surat-masuk/' . $item->id . '/disposisikan') }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <select name="tujuan_disposisi[]" id="guru" class="form-select" multiple aria-label="Multiple select example">
+                                                        @foreach($guru as $guru)
+                                                            <option value="{{ $guru->id }}">{{ $guru->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="mt-3">
+                                                        <label for="catatan_disposisi">Catatan:</label>
+                                                        <textarea name="catatan_disposisi" id="catatan_disposisi" class="form-control" rows="3" placeholder="Masukkan catatan disposisi"></textarea>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary mt-2">Disposisikan</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Form Tolak -->
+                                        <tr id="tolakForm" style="display:none;">
+                                            <th>Alasan Penolakan</th>
+                                            <td>
+                                                <form action="{{ url(auth()->user()->role . '/surat-masuk/' . $item->id . '/tolak_disposisi') }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <textarea name="catatan_disposisi" id="catatan_tolak" class="form-control" rows="3" placeholder="Masukkan alasan penolakan"></textarea>
+                                                    <button type="submit" class="btn btn-danger mt-2">Tolak Surat</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        @endif
+                                        @if (auth()->user()->role == 'admin' && $item->status == '2' && $item->status_disposisi == '1')
+                                       <!-- Form di Blade -->
+                                        <tr>
+                                            <th></th>
+                                            <td>
+                                                <form action="{{ url(auth()->user()->role . '/surat-masuk/' . $item->id . '/teruskan') }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-success mt-2">Teruskan Disposisi</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        @endif
+
                                     </tbody>
                                 </table>
                             </div>
@@ -93,13 +176,13 @@
                     <div class="card mb-4">
                         <div class="card-header">
                             File Surat -
-                            <a href="{{ Session('user')['role'] == 'admin'
-                                ? route('download-surat-admin', $item->id)
-                                : (Session('user')['role'] == 'guru'
-                                    ? route('download-surat-guru', $item->id)
-                                    : (Session('user')['role'] == 'staff administrasi'
-                                        ? route('download-surat-staff', $item->id)
-                                        : route('download-surat-kepsek', $item->id))) }}"
+                            <a href="{{ auth()->user()->role == 'admin'
+                                ? route('download-surat-masuk-admin', $item->id)
+                                : (auth()->user()->role == 'guru'
+                                    ? route('download-surat-masuk-guru', $item->id)
+                                    : (auth()->user()->role == 'staff'
+                                        ? route('download-surat-masuk-staff', $item->id)
+                                        : route('download-surat-masuk-kepsek', $item->id))) }}"
                                 class="btn btn-sm btn-primary">
                                 <i class="fa fa-download" aria-hidden="true"></i> &nbsp; Download Surat
                             </a>
@@ -107,8 +190,9 @@
 
                         <div class="card-body">
                             <div class="mb-3 row">
-                                <embed src="{{ Storage::url($item->file_surat) }}" width="500" height="375"
-                                    type="application/pdf">
+                                <object data="{{ Storage::url($item->file_surat) }}" type="application/pdf" width="100%" height="500">
+                                    PDF tidak dapat ditampilkan. <a href="{{ Storage::url($item->file_surat) }}">Unduh PDF</a>.
+                                </object>
                             </div>
                         </div>
                     </div>
@@ -116,4 +200,46 @@
             </div>
         </div>
     </main>
+    
+
 @endsection
+
+@push('addon-style')
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.1.1/dist/select2-bootstrap-5-theme.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+@endpush
+
+@push('addon-script')
+  <script>
+    document.getElementById('disposisiBtn').addEventListener('click', function() {
+        document.getElementById('disposisi').style.display = 'none';
+        document.getElementById('disposisiText').style.display = 'none';
+        document.getElementById('catatan').style.display = 'none';
+        document.getElementById('catatanText').style.display = 'none';
+        document.getElementById('disposisiForm').style.display = 'table-row';
+        document.getElementById('tolakForm').style.display = 'none';
+    });
+
+    document.getElementById('tolakBtn').addEventListener('click', function() {
+        document.getElementById('disposisi').style.display = 'none';
+        document.getElementById('disposisiText').style.display = 'none';
+        document.getElementById('catatan').style.display = 'none';
+        document.getElementById('catatanText').style.display = 'none';
+        document.getElementById('tolakForm').style.display = 'table-row';
+        document.getElementById('disposisiForm').style.display = 'none';
+    });
+
+
+    $(document).ready(function() {
+    // Inisialisasi Select2 pada elemen dengan class 'form-select'
+    $('#guru').select2({
+        placeholder: "Pilih Guru", // Placeholder yang muncul sebelum item dipilih
+        allowClear: true, // Memungkinkan untuk menghapus pilihan
+        width: '70%', // Membuat Select2 mengambil lebar penuh form
+        theme: "bootstrap-5"
+    
+    });
+    });
+    
+    </script>
+@endpush

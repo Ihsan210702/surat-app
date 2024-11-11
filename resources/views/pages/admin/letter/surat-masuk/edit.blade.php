@@ -38,7 +38,7 @@
                     <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
-            <form action="{{ route('letter.update_incoming', $item->id) }}" method="post" enctype="multipart/form-data">
+            <form action="{{ url(auth()->user()->role . '/surat-masuk/' . $item->id . '/update') }}" method="post" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 <div class="row gx-4">
@@ -91,6 +91,17 @@
                                     @enderror
                                 </div>
                                 <div class="mb-3 row">
+                                    <label for="jenis_surat" class="col-sm-3 col-form-label">Jenis Surat</label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control @error('jenis_surat') is-invalid @enderror" value="{{ $item->jenis_surat }}" name="jenis_surat" placeholder="Jenis Surat.." required>
+                                    </div>
+                                    @error('jenis_surat')
+                                        <div class="invalid-feedback">
+                                            {{ $message; }}
+                                        </div>
+                                    @enderror
+                                </div>
+                                <div class="mb-3 row">
                                     <label for="perihal" class="col-sm-3 col-form-label">Perihal</label>
                                     <div class="col-sm-9">
                                         <input type="text" class="form-control @error('perihal') is-invalid @enderror" value="{{ $item->perihal }}" name="perihal" placeholder="Perihal.." required>
@@ -104,7 +115,7 @@
                                 <div class="mb-3 row">
                                     <label for="status_surat" class="col-sm-3 col-form-label">Status Surat</label>
                                     <div class="col-sm-9">
-                                        <select name="status_surat" class="form-control selectx" required>
+                                        <select name="status_surat" class="form-control select" required>
                                             <option value="" disabled>Pilih..</option>
                                             <option value="Asli" {{ (isset($item) && $item->status_surat == 'Asli') ? 'selected' : '' }}>Asli</option>
                                             <option value="Tembusan" {{ (isset($item) && $item->status_surat == 'Tembusan') ? 'selected' : '' }}>Tembusan</option>

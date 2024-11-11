@@ -22,9 +22,9 @@
             <!-- Sidenav Menu Heading (Core)-->
             <div class="sidenav-menu-heading">Menu</div>
 
-            @if (Session('user')['role'] == 'admin')
+            @if (Auth::user()->role == 'admin')
                 <a class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }}"
-                    href="{{ url('admin/dashboard') }}">
+                    href="{{ route('admin-dashboard') }}">
                     <div class="nav-link-icon"><i data-feather="activity"></i></div>
                     Dashboard
                 </a>
@@ -33,15 +33,14 @@
                     <div class="nav-link-icon"><i data-feather="home"></i></div>
                     Data Departemen
                 </a> -->
-                <a class="nav-link {{ request()->is('admin/user*') ? 'active' : '' }}" href="{{ url('admin/user/') }}">
+                <a class="nav-link {{ request()->is('admin/user*') ? 'active' : '' }}" href="{{ url('admin/user') }}">
                     <div class="nav-link-icon"><i data-feather="user"></i></div>
                     Data User
                 </a>
-                <!-- <a class="nav-link {{ request()->is('admin/letter/create') ? 'active' : '' }}"
-                    href="{{ url('admin/letter/create') }}">
-                    <div class="nav-link-icon"><i data-feather="mail"></i></div>
-                    Tambah Surat
-                </a> -->
+                <a class="nav-link {{ request()->is('admin/disposisi*') ? 'active' : '' }}" href="{{ url('admin/disposisi') }}">
+                    <div class="nav-link-icon"><i data-feather="user"></i></div>
+                    Data Disposisi
+                </a>
                 <a class="nav-link {{ request()->is('admin/surat-masuk') ? 'active' : '' }}"
                     href="{{ url('admin/surat-masuk') }}">
                     <div class="nav-link-icon"><i data-feather="arrow-right"></i></div>
@@ -53,38 +52,27 @@
                     Surat Keluar
                 </a>
 
-                <a class="nav-link {{ request()->is('admin/letter/arsip') ? 'active' : '' }}"
-                    href="{{ url('admin/letter/arsip') }}">
+                <a class="nav-link {{ request()->is('admin/arsip') ? 'active' : '' }}"
+                    href="{{ url('admin/arsip') }}">
                     <div class="nav-link-icon"><i data-feather="folder"></i></div>
                     Arsip
                 </a>
 
                 {{-- <a class="nav-link {{ request()->is('admin/setting*') ? 'active' : '' }}"
-                    href="{{ url('admin/setting/') }}">
+                    href="{{ url('admin/setting') }}">
                     <div class="nav-link-icon"><i data-feather="settings"></i></div>
                     Profile
                 </a> --}}
             @endif
             <!-- Sidenav Link (Dashboard)-->
 
-            @if (Session('user')['role'] == 'staff administrasi')
-                {{-- <a class="nav-link {{ request()->is('admin/sender*') ? 'active' : '' }}"
-                        href="{{ route('sender.index') }}">
-                        <div class="nav-link-icon"><i data-feather="users"></i></div>
-                        Pengirim Surat
-                    </a> --}}
-
+            @if (Auth::user()->role == 'staff')
+                
                 <a class="nav-link {{ request()->is('staff/dashboard') ? 'active' : '' }}"
-                    href="{{ url('staff/dashboard') }}">
+                    href="{{ route('staff-dashboard') }}">
                     <div class="nav-link-icon"><i data-feather="activity"></i></div>
                     Dashboard
                 </a>
-
-                <!-- <a class="nav-link {{ request()->is('staff/letter/create') ? 'active' : '' }}"
-                    href="{{ url('staff/letter/create') }}">
-                    <div class="nav-link-icon"><i data-feather="mail"></i></div>
-                    Tambah Surat
-                </a> -->
                 <a class="nav-link {{ request()->is('staff/surat-masuk') ? 'active' : '' }}"
                     href="{{ url('staff/surat-masuk') }}">
                     <div class="nav-link-icon"><i data-feather="arrow-right"></i></div>
@@ -96,85 +84,51 @@
                     Surat Keluar
                 </a>
 
-                {{-- <a class="nav-link {{ request()->is('staff/setting*') ? 'active' : '' }}"
-                    href="{{ url('staff/setting/') }}">
-                    <div class="nav-link-icon"><i data-feather="settings"></i></div>
-                    Profile
-                </a> --}}
             @endif
 
-            @if (Session('user')['role'] == 'kepala sekolah')
-                {{-- <a class="nav-link {{ request()->is('admin/sender*') ? 'active' : '' }}"
-                    href="{{ route('sender.index') }}">
-                    <div class="nav-link-icon"><i data-feather="users"></i></div>
-                    Pengirim Surat
-                </a> --}}
-
-                <a class="nav-link {{ request()->is('kepala-sekolah/dashboard') ? 'active' : '' }}"
-                    href="{{ url('kepala-sekolah/dashboard') }}">
+            @if (Auth::user()->role == 'kepsek')
+                
+                <a class="nav-link {{ request()->is('kepsek/dashboard') ? 'active' : '' }}"
+                    href="{{ url('kepsek/dashboard') }}">
                     <div class="nav-link-icon"><i data-feather="activity"></i></div>
                     Dashboard
                 </a>
 
-                <a class="nav-link {{ request()->is('kepala-sekolah/user*') ? 'active' : '' }}"
-                    href="{{ url('kepala-sekolah/user/') }}">
+                <a class="nav-link {{ request()->is('kepsek/user*') ? 'active' : '' }}"
+                    href="{{ url('kepsek/user/') }}">
                     <div class="nav-link-icon"><i data-feather="user"></i></div>
                     Data User
                 </a>
-                <a class="nav-link {{ request()->is('kepala-sekolah/letter/surat-masuk') ? 'active' : '' }}"
-                    href="{{ url('kepala-sekolah/letter/surat-masuk') }}">
+                <a class="nav-link {{ request()->is('kepsek/surat-masuk') ? 'active' : '' }}"
+                    href="{{ url('kepsek/surat-masuk') }}">
                     <div class="nav-link-icon"><i data-feather="arrow-right"></i></div>
                     Surat Masuk
                 </a>
-                <a class="nav-link {{ request()->is('kepala-sekolah/letter/surat-keluar') ? 'active' : '' }}"
-                    href="{{ url('kepala-sekolah/letter/surat-keluar') }}">
+                <a class="nav-link {{ request()->is('kepsek/surat-keluar') ? 'active' : '' }}"
+                    href="{{ url('kepsek/surat-keluar') }}">
                     <div class="nav-link-icon"><i data-feather="arrow-left"></i></div>
                     Surat Keluar
                 </a>
-
-
-                {{-- <a class="nav-link {{ request()->is('kepala-sekolah/setting*') ? 'active' : '' }}"
-                    href="{{ url('kepala-sekolah/setting/') }}">
-                    <div class="nav-link-icon"><i data-feather="settings"></i></div>
-                    Profile
-                </a> --}}
             @endif
 
-            @if (Session('user')['role'] == 'guru')
-                {{-- <a class="nav-link {{ request()->is('admin/sender*') ? 'active' : '' }}"
-                href="{{ route('sender.index') }}">
-                <div class="nav-link-icon"><i data-feather="users"></i></div>
-                Pengirim Surat
-            </a> --}}
-
+            @if (Auth::user()->role == 'guru')
+                
                 <a class="nav-link {{ request()->is('guru/dashboard') ? 'active' : '' }}"
                     href="{{ url('guru/dashboard') }}">
                     <div class="nav-link-icon"><i data-feather="activity"></i></div>
                     Dashboard
                 </a>
-
-
-                <a class="nav-link {{ request()->is('guru/letter/surat-masuk') ? 'active' : '' }}"
-                    href="{{ url('guru/letter/surat-masuk') }}">
+                <a class="nav-link {{ request()->is('guru/surat-masuk') ? 'active' : '' }}"
+                    href="{{ url('guru/surat-masuk') }}">
                     <div class="nav-link-icon"><i data-feather="arrow-right"></i></div>
                     Surat Masuk
                 </a>
-                <a class="nav-link {{ request()->is('guru/letter/surat-keluar') ? 'active' : '' }}"
-                    href="{{ url('guru/letter/surat-keluar') }}">
+                <a class="nav-link {{ request()->is('guru/surat-keluar') ? 'active' : '' }}"
+                    href="{{ url('guru/surat-keluar') }}">
                     <div class="nav-link-icon"><i data-feather="arrow-left"></i></div>
                     Surat Keluar
                 </a>
-                
-
-                {{-- <a class="nav-link {{ request()->is('guru/setting*') ? 'active' : '' }}"
-                    href="{{ url('guru/setting/') }}">
-                    <div class="nav-link-icon"><i data-feather="settings"></i></div>
-                    Profile
-                </a> --}}
             @endif
-
-
-
 
         </div>
     </div>
@@ -182,7 +136,7 @@
     <div class="sidenav-footer">
         <div class="sidenav-footer-content">
             <div class="sidenav-footer-subtitle">Logged in as:</div>
-            <div class="sidenav-footer-title">{{ Session('user')['name'] }}</div>
+            <div class="sidenav-footer-title">{{ auth()->user()->name }}</div>
         </div>
     </div>
 </nav>

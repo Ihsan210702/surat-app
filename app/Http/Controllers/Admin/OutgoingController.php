@@ -4,10 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Department;
 use App\Models\Outgoing;
-use App\Models\Letter;
-use App\Models\Sender;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
@@ -24,41 +21,107 @@ class OutgoingController extends Controller
     public function outgoing_mail()
     {
         if (request()->ajax()) {
-            $query = Outgoing::latest()->get();
+            // Cek role user
+            $userRole = auth()->user()->role;
+            // Mendapatkan query data
+            if ($userRole == 'kepsek') {
+                // Filter untuk menampilkan hanya data yang disetujui KTU bagi kepala sekolah dan guru
+                $query = Outgoing::whereIn('status', ['0', '2', '3'])->latest()->get();
+            } else {
+                // Untuk role lain (admin, staff, dll), tampilkan semua data
+                $query = Outgoing::where('status', '!=', '4')->latest()->get();
+            }
 
             return Datatables::of($query)
+                ->addColumn('status', function ($item) {
+                    $statusText = '';
+                    $userRole = auth()->user()->role;
+                    // Kombinasi status utama 
+                    if ($userRole == 'kepsek') {
+                        // Jika status = 2
+                        switch ($item->status) {
+                            case '0':
+                                $statusText = '<span class="badge bg-danger"><i class="fa fa-times"></i> &nbsp;Ditolak Kepala</span>';
+                                break;
+                            case '2':
+                                $statusText = '<span class="badge bg-warning"><i class="fas fa-check"></i> &nbsp;Mohon Cek Berkas</span>';
+                                break;
+                            case '3':
+                                $statusText = '<span class="badge bg-success"><i class="fas fa-paper-plane"></i> &nbsp;Berkas siap dikirim</span>';
+                                break;
+                            default:
+                                $statusText = '<span class="badge bg-secondary">Status Tidak Diketahui</span>';
+                                break;
+                        }
+                    } else {
+                        switch ($item->status) {
+                            case '1':
+                                $statusText = '<span class="badge bg-warning"><i class="fas fa-spinner"></i> &nbsp;Pengecekan KTU</span>';
+                                break;
+                            case '2':
+                                $statusText = '<span class="badge bg-info"><i class="fas fa-spinner"></i> &nbsp;Berkas dicek Pimpinan</span>';
+                                break;
+                            case '3':
+                                $statusText = '<span class="badge bg-success"><i class="fa fa-paper-plane"></i> &nbsp;Berkas siap dikirim</span>';
+                                break;
+                            case '0':
+                                $statusText = '<span class="badge bg-danger"><i class="fa fa-times"></i> &nbsp;Ditolak Kepala</span>';
+                                break;
+                            default:
+                                $statusText = '<span class="badge bg-secondary">Status Tidak Diketahui</span>';
+                                break;
+                        }
+                    }
+                    return $statusText;
+                })
                 ->addColumn('action', function ($item) {
                     $rolePrefix = [
                         'admin' => 'admin',
                         'guru' => 'guru',
                         'staff' => 'staff',
-                        'kepala sekolah' => 'kepala-sekolah'
+                        'kepsek' => 'kepsek'
                     ];
 
-                    $prefix = $rolePrefix[Session('user')['role']] ?? 'default'; // default jika role tidak dikenali
+                   // Gunakan mapping $rolePrefix untuk mendapatkan prefix yang benar
+                    $prefix = $rolePrefix[auth()->user()->role] ?? 'default'; // 'default' jika role tidak dikenali
 
-                    return '
-    
-                        <a class="btn btn-success btn-xs" href="' . route('letter.show_outgoing', ['id' => $item->id]) . ' ">
-                            <i class="fa fa-search-plus"></i> &nbsp; Detail
-                        </a>
-                        <a class="btn btn-primary btn-xs" href="' . route('letter.edit_outgoing', $item->id) . '">
-                            <i class="fas fa-edit"></i> &nbsp; Ubah
-                        </a>
-                        <form action="' . route('letter.destroy_outgoing', $item->id) . '" method="POST" onsubmit="return confirm(' . "'Anda akan menghapus item ini dari situs anda?'" . ')">
-                            ' . method_field('delete') . csrf_field() . '
-                            <button class="btn btn-danger btn-xs">
-                                <i class="far fa-trash-alt"></i> &nbsp; Hapus
-                            </button>
-                        </form>
-                    ';
+                    // Tampilkan tombol "Detail" untuk semua role
+                    $buttons = '
+                    <a class="btn btn-success btn-xs" href="' . url($prefix . '/surat-keluar/' . $item->id . '/show') . '">
+                        <i class="fa fa-search-plus"></i> &nbsp; Detail
+                    </a>';
+
+                    // Tampilkan tombol "Ubah" dan "Hapus" hanya jika role pengguna adalah "admin" atau "staff administrasi"
+                    if ($item->status == '0' || $item->status == '1') {
+                        if (auth()->user()->role == 'admin' || auth()->user()->role == 'staff') {
+                        $buttons .= '
+                            <a class="btn btn-primary btn-xs" href="' . url($prefix . '/surat-keluar/' . $item->id . '/edit') . '">
+                                <i class="fas fa-edit"></i> &nbsp; Ubah
+                            </a>
+                            <form action="' . url($prefix . '/surat-keluar/' . $item->id . '/destroy') . '" method="POST" onsubmit="return confirm(' . "'Anda akan menghapus item ini dari situs anda?'" . ')">
+                                ' . method_field('delete') . csrf_field() . '
+                                <button class="btn btn-danger btn-xs">
+                                    <i class="far fa-trash-alt"></i> &nbsp; Hapus
+                                </button>
+                            </form>';
+                        }
+                    }
+                    // Jika status 3, tambahkan tombol "Arsipkan" hanya untuk admin
+                    if ($item->status == '3' && auth()->user()->role == 'admin') {
+                        $buttons .= '
+                            <a class="btn btn-secondary btn-xs" href="' . url($prefix . '/surat-keluar/' . $item->id . '/arsipkan') . '">
+                                <i class="fa fa-archive"></i> &nbsp; Arsipkan
+                            </a>';
+                    }
+
+                    return $buttons;
                 })
                 ->editColumn('post_status', function ($item) {
                     return $item->post_status == 'Published' ? '<div class="badge bg-green-soft text-green">' . $item->post_status . '</div>' : '<div class="badge bg-gray-200 text-dark">' . $item->post_status . '</div>';
                 })
                 ->addIndexColumn()
                 ->removeColumn('id')
-                ->rawColumns(['action', 'post_status'])
+                ->rawColumns(['action', 'post_status','status'])
                 ->make();
         }
 
@@ -84,7 +147,7 @@ class OutgoingController extends Controller
         Outgoing::create($validatedData);
 
         return redirect()
-            ->route('surat-keluar')
+            ->to('/' . auth()->user()->role . '/surat-keluar')
             ->with('success', 'Sukses! 1 Data Berhasil Disimpan');
     }
 
@@ -140,10 +203,10 @@ class OutgoingController extends Controller
         $item->update($validatedData);
 
         return redirect()
-            ->route('surat-keluar')
+            ->to('/' . auth()->user()->role . '/surat-keluar')
             ->with('success', 'Sukses! 1 Data Berhasil Diubah');
     }
-    public function download_letter($id)
+    public function download_surat_keluar($id)
     {
         $item = Outgoing::findOrFail($id);
         // dd($item->letter_file);
@@ -157,10 +220,14 @@ class OutgoingController extends Controller
         $item = Outgoing::findOrFail($id);
 
         // dd($item);
-        $item->update(['status' => '2']);
-
-        return redirect()->back()
-            ->with('success', 'Sukses! 1 Data Berhasil Diubah');
+        $item->update([
+            'status' => '2',
+            'catatan' => ''
+        ]);
+        // dd($item->fresh());
+        return redirect()
+            ->to('/' . auth()->user()->role . '/surat-keluar')
+            ->with('success', 'Sukses! Surat Keluar diajukan ke Kepala');
     }
 
     public function reject(Request $request, $id)
@@ -184,10 +251,66 @@ class OutgoingController extends Controller
 
         // dd($item);
         return redirect()
-            ->route('surat-keluar')
+            ->to('/' . auth()->user()->role . '/surat-keluar')
             ->with('success', 'Sukses! 1 Data Berhasil Dihapus');
     }
 
+    public function kirimSurat(Request $request, $id)
+    {
+        // Validasi data dari form
+        $request->validate([
+            'catatan' => 'required|string|max:255',
+        ]);
+
+        // Temukan surat berdasarkan ID
+        $OutgoingMail = Outgoing::findOrFail($id);
+        // Simpan tujuan disposisi dan catatan
+        $OutgoingMail->catatan = $request->input('catatan');
+        $OutgoingMail->status = 3 ;
+
+        // Simpan perubahan ke database
+        $OutgoingMail->save();
+
+        // Redirect dengan pesan sukses
+        return redirect()
+            ->to('/' . auth()->user()->role . '/surat-keluar')
+            ->with('success', 'Surat Keluar sudah di ACC');
+    }
+    public function tolakSurat(Request $request, $id)
+    {
+        // Validasi data dari form
+        $request->validate([
+            'catatan' => 'required|string|max:255',
+        ]);
+
+        // Temukan surat berdasarkan ID
+        $OutgoingMail = Outgoing::findOrFail($id);
+        // Simpan tujuan disposisi dan catatan
+        $OutgoingMail->catatan = $request->input('catatan');
+        $OutgoingMail->status = 0 ;
+
+        // Simpan perubahan ke database
+        $OutgoingMail->save();
+
+        // Redirect dengan pesan sukses
+        return redirect()
+            ->to('/' . auth()->user()->role . '/surat-keluar')
+            ->with('success', 'Surat Keluar ditolak');
+    }
+    public function arsipkan(Request $request, $id)
+    {
+        $OutgoingMail = Outgoing::findOrFail($id);
+        
+        // Ubah status_disposisi sesuai kebutuhan (misalnya menjadi 2 jika disposisi diteruskan)
+        $OutgoingMail->status = 4;
+
+        // Simpan perubahan
+        $OutgoingMail->save();
+
+        return redirect()
+            ->to('/' . auth()->user()->role . '/surat-keluar')
+            ->with('success', 'Surat Keluar sudah diarsipkan');
+    }
     public function arsip()
     {
         if (request()->ajax()) {
@@ -198,11 +321,12 @@ class OutgoingController extends Controller
                     $rolePrefix = [
                         'admin' => 'admin',
                         'guru' => 'guru',
-                        'staff' => 'staff',
-                        'kepala sekolah' => 'kepala-sekolah'
+                        'staff administrasi' => 'staff',
+                        'kepala sekolah' => 'kepsek'
                     ];
 
-                    $prefix = $rolePrefix[Session('user')['role']] ?? 'default'; // default jika role tidak dikenali
+                   // Gunakan mapping $rolePrefix untuk mendapatkan prefix yang benar
+                    $prefix = $rolePrefix[auth()->user()->role] ?? 'default'; // 'default' jika role tidak dikenali
 
                     return '
                        

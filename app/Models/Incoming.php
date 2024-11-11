@@ -20,7 +20,10 @@ class Incoming extends Model
         'perihal',
         'status_surat',
         'file_surat',
-        'status'
+        'status',
+        'tujuan_disposisi',
+        'catatan_disposisi',
+        'status_disposisi'
     ];
 
     protected $hidden = [];

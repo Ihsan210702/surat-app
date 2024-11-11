@@ -17,7 +17,7 @@
                             </h1>
                         </div>
                         <div class="col-12 col-xl-auto mb-3">
-                            <a class="btn btn-sm btn-light text-primary" href="{{ route('user.index') }}">
+                            <a class="btn btn-sm btn-light text-primary" href="{{ url(auth()->user()->role.'/user') }}">
                                 <i class="me-1" data-feather="arrow-left"></i>
                                 Kembali ke Semua Pengguna
                             </a>
@@ -45,7 +45,7 @@
                                         aria-label="Close"></button>
                                 </div>
                             @endif
-                            <form action="{{ route('user.store') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ url(auth()->user()->role . '/user') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <!-- Form Row-->
                                 <div class="row gx-3 mb-3">

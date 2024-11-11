@@ -17,7 +17,7 @@
                             </h1>
                         </div>
                         <div class="col-12 col-xl-auto mb-3">
-                            <a class="btn btn-sm btn-light text-primary" href="{{ route('surat-keluar') }}">
+                            <a class="btn btn-sm btn-light text-primary" href="{{ url(auth()->user()->role .'/surat-keluar') }}">
                                 <i class="me-1" data-feather="arrow-left"></i>
                                 Kembali Ke Semua Surat
                             </a>
@@ -35,21 +35,15 @@
                             <div>Detail Surat
                             </div>
                             <div class="d-flex gap-2">
-                            @if ($item->status == '1')
-                                <a href="{{ route('approve', $item->id) }}" class="btn btn-sm btn-success">
-                                    <i class="fa fa-check" aria-hidden="true"></i> &nbsp; Setujui
+                            @if (auth()->user()->role == 'admin')
+                                @if ($item->status == '1' || $item->status == '0')
+                                <a href="{{ url(auth()->user()->role . '/surat-keluar/' . $item->id . '/approve') }}" class="btn btn-sm btn-success">
+                                    <i class="fa fa-check" aria-hidden="true"></i> &nbsp; Teruskan ke Kepala
                                 </a>
-                                <a href="{{ route('reject', $item->id) }}" class="btn btn-sm btn-danger">
+                                <!-- <a href="{{ url(auth()->user()->role . '/surat-keluar/' . $item->id . '/reject') }}" class="btn btn-sm btn-danger">
                                     <i class="fa fa-times" aria-hidden="true"></i> &nbsp; Tolak
-                                </a>
-                            @elseif ($item->status == '2')
-                                <span class="btn btn-sm btn-info text-capitalize">
-                                    Surat Telah Disetujui KTU
-                                </span>
-                            @else
-                                <span class="btn btn-sm btn-info text-capitalize">
-                                    Surat Telah {{ $item->status == '3' ? 'Ditolak' : $item->status }}
-                                </span>
+                                </a> -->
+                                @endif
                             @endif
                             </div>
                         </div>
@@ -75,8 +69,52 @@
                                             <th>Perihal</th>
                                             <td>{{ $item->perihal }}</td>
                                         </tr>
-                                        
-                                        
+                                        <tr>
+                                            <th id="catatan">Catatan</th>
+                                            <td id="catatanText">
+                                                @if ($item->catatan == '')
+                                                    <i>Belum ada catatan</i>
+                                                @else
+                                                    {{ $item->catatan }}
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        @if (auth()->user()->role == 'kepsek' && $item->status == '2')
+                                        <tr>
+                                            <th></th>
+                                            <td>
+                                                <!-- Tombol untuk memilih apakah akan disposisikan atau ditolak -->
+                                                <button type="button" class="btn btn-success" id="kirim">Kirim Berkas</button>
+                                                <button type="button" class="btn btn-danger" id="tolakBtn">Cek Kembali</button>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Form Disposisi -->
+                                        <tr id="catatanForm" style="display:none;">
+                                            <th>Catatan : </th>
+                                            <td>
+                                                <form action="{{ url(auth()->user()->role . '/surat-keluar/' . $item->id . '/kirim_surat') }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <textarea name="catatan" id="catatan" class="form-control" rows="3" placeholder="Masukkan catatan pengiriman"></textarea>
+                                                    <button type="submit" class="btn btn-primary mt-2">Kirim</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+
+                                        <!-- Form Tolak -->
+                                        <tr id="cekForm" style="display:none;">
+                                            <th>Alasan Cek Kembali</th>
+                                            <td>
+                                                <form action="{{ url(auth()->user()->role . '/surat-keluar/' . $item->id . '/tolak_surat') }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <textarea name="catatan" id="catatan" class="form-control" rows="3" placeholder="Masukkan alasan"></textarea>
+                                                    <button type="submit" class="btn btn-danger mt-2">Tolak Surat</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        @endif  
                                     </tbody>
                                 </table>
                             </div>
@@ -87,13 +125,13 @@
                     <div class="card mb-4">
                         <div class="card-header">
                             File Surat -
-                            <a href="{{ Session('user')['role'] == 'admin'
-                                ? route('download-surat-admin', $item->id)
-                                : (Session('user')['role'] == 'guru'
-                                    ? route('download-surat-guru', $item->id)
-                                    : (Session('user')['role'] == 'staff administrasi'
-                                        ? route('download-surat-staff', $item->id)
-                                        : route('download-surat-kepsek', $item->id))) }}"
+                            <a href="{{ auth()->user()->role == 'admin'
+                                ? route('download-surat-keluar-admin', $item->id)
+                                : (auth()->user()->role == 'guru'
+                                    ? route('download-surat-keluar-guru', $item->id)
+                                    : (auth()->user()->role == 'staff'
+                                        ? route('download-surat-keluar-staff', $item->id)
+                                        : route('download-surat-keluar-kepsek', $item->id))) }}"
                                 class="btn btn-sm btn-primary">
                                 <i class="fa fa-download" aria-hidden="true"></i> &nbsp; Download Surat
                             </a>
@@ -111,3 +149,20 @@
         </div>
     </main>
 @endsection
+@push('addon-script')
+  <script>
+    document.getElementById('kirim').addEventListener('click', function() {
+        document.getElementById('catatan').style.display = 'none';
+        document.getElementById('catatanText').style.display = 'none';
+        document.getElementById('catatanForm').style.display = 'table-row';
+        document.getElementById('cekForm').style.display = 'none';
+    });
+
+    document.getElementById('tolakBtn').addEventListener('click', function() {
+        document.getElementById('catatan').style.display = 'none';
+        document.getElementById('catatanText').style.display = 'none';
+        document.getElementById('cekForm').style.display = 'table-row';
+        document.getElementById('catatanForm').style.display = 'none';
+    });
+    </script>
+@endpush

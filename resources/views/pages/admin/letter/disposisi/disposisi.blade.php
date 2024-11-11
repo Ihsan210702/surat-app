@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title')
-    Surat Keluar
+    Surat Masuk
 @endsection
 
 @section('container')
@@ -13,7 +13,7 @@
                         <div class="col-auto mb-3">
                             <h1 class="page-header-title">
                                 <div class="page-header-icon"><i data-feather="user"></i></div>
-                                Surat Keluar
+                                Data Disposisi
                             </h1>
                         </div>
                     </div>
@@ -25,21 +25,10 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="card card-header-actions mb-4">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">List Surat Keluar</h5>
-                        <div>
-                            @if (auth()->user()->role == 'admin' || auth()->user()->role == 'staff')
-                            <a class="btn btn-sm btn-success" href="{{ url(auth()->user()->role .'/surat-keluar/create') }}">
-                                <i data-feather="plus"></i> &nbsp;
-                                Tambah Surat Keluar
-                            </a>
-                            @endif
-                            <!-- <a class="btn btn-sm btn-primary" href="{{ url(auth()->user()->role .'/print/surat-keluar') }}" target="_blank">
-                                <i data-feather="printer"></i> &nbsp;
-                                Cetak Laporan
-                            </a> -->
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">List Data Disposisi</h5>
+                            
                         </div>
-                    </div>
                         <div class="card-body">
                             {{-- Alert --}}
                             @if (session()->has('success'))
@@ -65,8 +54,8 @@
                                         <th width="10">No.</th>
                                         <th>Status</th>
                                         <th>No. Surat</th>
-                                        <th>Tanggal</th>
-                                        <th>Tujuan</th>
+                                        <th>Tanggal Surat</th>
+                                        <th>Pengirim</th>
                                         <th>Perihal</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -99,7 +88,7 @@
           { data: 'status', name: 'status' },
           { data: 'no_surat', name: 'no_surat' },
           { data: 'tanggal_surat', name: 'tanggal_surat' },
-          { data: 'tujuan', name: 'tujuan' },
+          { data: 'pengirim', name: 'pengirim' },
           { data: 'perihal', name: 'perihal' },
           { 
             data: 'action', 
