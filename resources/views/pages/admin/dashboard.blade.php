@@ -62,7 +62,19 @@
                             </div>
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="{{ route('surat-masuk') }}">Selengkapnya</a>
+                        <a class="text-white stretched-link" href="
+                            @if(auth()->user()->role == 'admin')
+                                {{ url('admin/surat-masuk') }}
+                            @elseif(auth()->user()->role == 'kepsek')
+                                {{ url('kepsek/surat-masuk') }}
+                            @elseif(auth()->user()->role == 'guru')
+                                {{ url('guru/surat-masuk') }}
+                            @elseif(auth()->user()->role == 'staff')
+                                {{ url('staff/surat-masuk') }}
+                        
+                            @endif
+                        ">Selengkapnya</a>
+
                             <div class="text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>
@@ -79,7 +91,18 @@
                             </div>
                         </div>
                         <div class="card-footer d-flex align-items-center justify-content-between small">
-                            <a class="text-white stretched-link" href="{{ route('surat-keluar') }}">Selengkapnya</a>
+                        <a class="text-white stretched-link" href="
+                            @if(auth()->user()->role == 'admin')
+                                {{ url('admin/surat-keluar') }}
+                            @elseif(auth()->user()->role == 'kepsek')
+                                {{ url('kepsek/surat-keluar') }}
+                            @elseif(auth()->user()->role == 'guru')
+                                {{ url('guru/surat-keluar') }}
+                            @elseif(auth()->user()->role == 'staff')
+                                {{ url('staff/surat-keluar') }}
+                        
+                            @endif
+                        ">Selengkapnya</a>
                             <div class="text-white"><i class="fas fa-angle-right"></i></div>
                         </div>
                     </div>

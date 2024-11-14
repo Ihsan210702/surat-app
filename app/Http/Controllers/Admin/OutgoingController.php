@@ -143,6 +143,7 @@ class OutgoingController extends Controller
         }
 
         $validatedData['status'] = '1';
+        $validatedData['catatan'] = '';
 
         Outgoing::create($validatedData);
 

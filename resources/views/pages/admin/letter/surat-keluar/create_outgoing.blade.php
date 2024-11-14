@@ -107,17 +107,7 @@
                                         </div>
                                     @enderror
                                 </div>
-                                <div class="mb-3 row">
-                                    <label for="file_surat" class="col-sm-3 col-form-label">Isi Surat</label>
-                                    <div class="col-sm-9">
-                                        <textarea id="editor"></textarea>
-                                    </div>
-                                    @error('file_Surat')
-                                        <div class="invalid-feedback">
-                                            {{ $message; }}
-                                        </div>
-                                    @enderror
-                                </div>
+                    
                                 <div class="mb-3 row">
                                     <label for="" class="col-sm-3 col-form-label"></label>
                                     <div class="col-sm-9">

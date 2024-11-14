@@ -22,6 +22,31 @@
     <ul class="navbar-nav align-items-center ms-auto">
         <!-- Navbar Search Dropdown-->
         <!-- * * Note: * * Visible only below the lg breakpoint-->
+        @if(auth()->user()->unreadNotifications->count())
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle btn btn-primary text-white" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa fa-bell"></i><span class="badge badge-light">{{ auth()->user()->unreadNotifications->count() }}</span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+                <h6 class="dropdown-header">Notifikasi</h6>
+                @foreach(auth()->user()->unreadNotifications as $notification)
+                    <a class="dropdown-item" href="">
+                        <strong>{{ $notification->data['perihal'] }}</strong><br>
+                        <small class="text-muted">{{ \Carbon\Carbon::parse($notification->data['tanggal_surat'])->format('d M Y') }}</small>
+                    </a>
+                    <div class="dropdown-divider"></div>
+                @endforeach
+                <a class="dropdown-item text-center text-primary" href="#">Tandai semua telah dibaca</a>
+            </div>
+        </li>
+    @else
+        <li class="nav-item">
+            <div class="alert alert-secondary m-0" role="alert">
+                Tidak ada notifikasi baru.
+            </div>
+        </li>
+    @endif
+
 
         <!-- User Dropdown-->
         <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Notifications\SuratMasukKeluarNotification;
 use Illuminate\Http\Request;
 use App\Models\Incoming;
 use App\Models\User;
@@ -49,8 +50,12 @@ class IncomingController extends Controller
         $validatedData['catatan_disposisi'] = '';
         $validatedData['status_disposisi'] = '0';
 
-        Incoming::create($validatedData);
-
+        $surat = Incoming::create($validatedData);
+        // Kirim notifikasi ke semua user
+        $users = User::all(); // Atau filter user sesuai kebutuhan
+        foreach ($users as $user) {
+            $user->notify(new SuratMasukKeluarNotification($surat));
+        }
         return redirect()
             ->to('/' . auth()->user()->role . '/surat-masuk')
             ->with('success', 'Sukses! 1 Data Berhasil Disimpan');
@@ -101,20 +106,23 @@ class IncomingController extends Controller
                         // Jika status = 2, tambahkan status_disposisi
                         switch ($item->status_disposisi) {
                             case '0':
-                                $statusText = '<span class="badge bg-info"><i class="fas fa-spinner">&nbsp;Menunggu Disposisi</span>';
+                                $statusText = '<span class="badge bg-info"><i class="fas fa-spinner"></i> &nbsp;Menunggu Disposisi</span>';
                                 break;
                             case '1':
-                                $statusText = '<span class="badge bg-warning"><i class="fas fa-spinner">&nbsp;Disposisi diproses KTU</span>';
+                                $statusText = '<span class="badge bg-warning"><i class="fas fa-spinner"></i> &nbsp;Disposisi diproses KTU</span>';
                                 break;
                             case '-1':
                                 $statusText = '<span class="badge bg-danger">Ditolak Kepala</span>';
+                                break;
+                            default:
+                                $statusText = '<span class="badge bg-secondary">Status Tidak Diketahui</span>';
                                 break;
                         }
                     } elseif ($item->status == '3') {
                         // Jika status = 3, tambahkan status_disposisi
                         switch ($item->status_disposisi) {
                             case '0':
-                                $statusText = '<span class="badge bg-info"><i class="fas fa-spinner">&nbsp;Menunggu Disposisi</span>';
+                                $statusText = '<span class="badge bg-info"><i class="fas fa-spinner"></i> &nbsp;Menunggu Disposisi</span>';
                                 break;
                             case '1':
                                 // Cek apakah user adalah guru
@@ -131,12 +139,15 @@ class IncomingController extends Controller
                                     $statusText = '<span class="badge bg-success"><i class="fas fa-check"></i>&nbsp;Selesai Disposisi</span>';
                                 }
                                 break;
+                            default:
+                                $statusText = '<span class="badge bg-secondary">Status Tidak Diketahui</span>';
+                                break;
                         }
                     } else {
                         // Jika status bukan 2, tampilkan status utama saja
                         switch ($item->status) {
                             case '1':
-                                $statusText = '<span class="badge bg-warning"><i class="fas fa-spinner">&nbsp;Menunggu KTU</span>';
+                                $statusText = '<span class="badge bg-warning"><i class="fas fa-spinner"></i> &nbsp;Menunggu KTU</span>';
                                 break;
                             case '0':
                                 $statusText = '<span class="badge bg-danger">Ditolak KTU</span>';
@@ -168,7 +179,7 @@ class IncomingController extends Controller
 
                     // Tampilkan tombol "Ubah" dan "Hapus" hanya jika role pengguna adalah "admin" atau "staff administrasi"
                     if (in_array($item->status, [0, 1,2]) 
-                        && $item->status_disposisi == '-1'
+                        // && $item->status_disposisi == '-1'
                         && (auth()->user()->role == 'admin' || auth()->user()->role == 'staff')) {
                         $buttons .= '
                             <a class="btn btn-primary btn-xs" href="' . url($prefix . '/surat-masuk/' . $item->id . '/edit') . '">
