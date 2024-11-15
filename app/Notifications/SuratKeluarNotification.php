@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SuratMasukKeluarNotification extends Notification
+class SuratKeluarNotification extends Notification
 {
     use Queueable;
 
@@ -39,7 +39,8 @@ class SuratMasukKeluarNotification extends Notification
     {
         return [
             'surat_id' => $this->surat->id,
-            'jenis_surat' => $this->surat->jenis_surat, // surat masuk atau keluar
+            'jenis_surat' => $this->surat->jenis_surat, 
+            'tipe_surat' => 'Surat Keluar', 
             'perihal' => $this->surat->perihal,
             'tanggal_surat' => $this->surat->tanggal_surat,
             // 'url' => route('surat.show', $this->surat->id), // URL untuk melihat detail surat

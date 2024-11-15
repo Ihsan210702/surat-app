@@ -30,10 +30,16 @@
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
                 <h6 class="dropdown-header">Notifikasi</h6>
                 @foreach(auth()->user()->unreadNotifications as $notification)
-                    <a class="dropdown-item" href="">
-                        <strong>{{ $notification->data['perihal'] }}</strong><br>
-                        <small class="text-muted">{{ \Carbon\Carbon::parse($notification->data['tanggal_surat'])->format('d M Y') }}</small>
-                    </a>
+                <a class="dropdown-item" href="#">
+                    <strong>{{ $notification->data['tipe_surat'] ?? 'Jenis Surat Tidak Diketahui' }}</strong><br>
+                    <strong>{{ $notification->data['jenis_surat'] ?? 'Jenis Surat Tidak Diketahui' }}</strong><br>
+                    <small class="text-muted">
+                        {{ \Carbon\Carbon::parse($notification->data['tanggal_surat'])->format('d M Y') }}
+                    </small>
+                    <div class="text-muted">
+                        {{ $notification->data['perihal'] ?? 'Tidak ada perihal' }}
+                    </div>
+                </a>
                     <div class="dropdown-divider"></div>
                 @endforeach
                 <a class="dropdown-item text-center text-primary" href="#">Tandai semua telah dibaca</a>

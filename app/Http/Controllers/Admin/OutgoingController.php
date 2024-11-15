@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Notifications\SuratKeluarNotification;
 use App\Models\Outgoing;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
@@ -145,8 +147,11 @@ class OutgoingController extends Controller
         $validatedData['status'] = '1';
         $validatedData['catatan'] = '';
 
-        Outgoing::create($validatedData);
-
+        $surat = Outgoing::create($validatedData);
+        $users = User::whereIn('role', ['admin', 'staff', 'guru'])->get();
+        foreach ($users as $user) {
+            $user->notify(new SuratKeluarNotification($surat));
+        }
         return redirect()
             ->to('/' . auth()->user()->role . '/surat-keluar')
             ->with('success', 'Sukses! 1 Data Berhasil Disimpan');
@@ -225,6 +230,11 @@ class OutgoingController extends Controller
             'status' => '2',
             'catatan' => ''
         ]);
+         // Notifikasi ke kepala sekolah
+        $kepalaSekolah = User::where('role', 'kepsek')->first();
+        if ($kepalaSekolah) {
+            $kepalaSekolah->notify(new SuratKeluarNotification($item));
+        }
         // dd($item->fresh());
         return redirect()
             ->to('/' . auth()->user()->role . '/surat-keluar')

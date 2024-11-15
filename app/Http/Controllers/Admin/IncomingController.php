@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Notifications\SuratMasukKeluarNotification;
+use App\Notifications\SuratMasukNotification;
 use Illuminate\Http\Request;
 use App\Models\Incoming;
 use App\Models\User;
@@ -54,7 +54,7 @@ class IncomingController extends Controller
         // Kirim notifikasi ke semua user
         $users = User::all(); // Atau filter user sesuai kebutuhan
         foreach ($users as $user) {
-            $user->notify(new SuratMasukKeluarNotification($surat));
+            $user->notify(new SuratMasukNotification($surat));
         }
         return redirect()
             ->to('/' . auth()->user()->role . '/surat-masuk')
