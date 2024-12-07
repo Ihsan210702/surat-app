@@ -65,9 +65,9 @@
                                         <th width="10">No.</th>
                                         <th>Status</th>
                                         <th>No. Surat</th>
-                                        <th>Tanggal Surat</th>
                                         <th>Pengirim</th>
                                         <th>Perihal</th>
+                                        <th>Tanggal Surat</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -98,9 +98,9 @@
           },
           { data: 'status', name: 'status' },
           { data: 'no_surat', name: 'no_surat' },
-          { data: 'tanggal_surat', name: 'tanggal_surat' },
           { data: 'pengirim', name: 'pengirim' },
           { data: 'perihal', name: 'perihal' },
+          { data: 'tanggal_surat', name: 'tanggal_surat' },
           { 
             data: 'action', 
             name: 'action',

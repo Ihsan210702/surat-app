@@ -51,46 +51,12 @@
                                         </div>
                                     @enderror
                                 </div>
-
-                                <div class="mb-3 row">
-                                    <label for="tanggal_surat" class="col-sm-3 col-form-label">Tanggal Surat</label>
-                                    <div class="col-sm-9">
-                                        <input type="date" class="form-control @error('tanggal_surat') is-invalid @enderror" value="{{ old('tanggal_surat') }}" name="tanggal_surat" required>
-                                    </div>
-                                    @error('tanggal_surat')
-                                        <div class="invalid-feedback">
-                                            {{ $message; }}
-                                        </div>
-                                    @enderror
-                                </div>
                                 <div class="mb-3 row">
                                     <label for="pengirim" class="col-sm-3 col-form-label">Pengirim</label>
                                     <div class="col-sm-9">
                                         <input type="text" class="form-control @error('pengirim') is-invalid @enderror" value="{{ old('pengirim') }}" name="pengirim" placeholder="Pengirim.." required>
                                     </div>
                                     @error('pengirim')
-                                        <div class="invalid-feedback">
-                                            {{ $message; }}
-                                        </div>
-                                    @enderror
-                                </div>
-                                <div class="mb-3 row">
-                                    <label for="jenis_surat" class="col-sm-3 col-form-label">Jenis Surat</label>
-                                    <div class="col-sm-9">
-                                        <input type="text" class="form-control @error('jenis_surat') is-invalid @enderror" value="{{ old('jenis_surat') }}" name="jenis_surat" placeholder="Jenis Surat.." required>
-                                    </div>
-                                    @error('jenis_surat')
-                                        <div class="invalid-feedback">
-                                            {{ $message; }}
-                                        </div>
-                                    @enderror
-                                </div>
-                                <div class="mb-3 row">
-                                    <label for="tanggal_diterima" class="col-sm-3 col-form-label">Tanggal Diterima</label>
-                                    <div class="col-sm-9">
-                                        <input type="date" class="form-control @error('tanggal_diterima') is-invalid @enderror" value="{{ old('tanggal_diterima') }}" name="tanggal_diterima" required>
-                                    </div>
-                                    @error('tanggal_diterima')
                                         <div class="invalid-feedback">
                                             {{ $message; }}
                                         </div>
@@ -108,15 +74,38 @@
                                     @enderror
                                 </div>
                                 <div class="mb-3 row">
-                                    <label for="status_surat" class="col-sm-3 col-form-label">Status Surat</label>
+                                    <label for="isi_singkat" class="col-sm-3 col-form-label">Isi Singkat</label>
                                     <div class="col-sm-9">
-                                        <select name="status_surat" class="form-control" required>
+                                        <textarea class="form-control @error('isi_singkat') is-invalid @enderror" name="isi_singkat" placeholder="Isi Singkat.." required>{{ old('isi_singkat') }}</textarea>
+                                    </div>
+                                    @error('isi_singkat')
+                                        <div class="invalid-feedback">
+                                            {{ $message; }}
+                                        </div>
+                                    @enderror
+                                </div>
+                                <div class="mb-3 row">
+                                    <label for="tanggal_diterima" class="col-sm-3 col-form-label">Tanggal Diterima</label>
+                                    <div class="col-sm-9">
+                                        <input type="date" class="form-control @error('tanggal_diterima') is-invalid @enderror" value="{{ old('tanggal_diterima') }}" name="tanggal_diterima" required>
+                                    </div>
+                                    @error('tanggal_diterima')
+                                        <div class="invalid-feedback">
+                                            {{ $message; }}
+                                        </div>
+                                    @enderror
+                                </div>
+                                <div class="mb-3 row">
+                                    <label for="sifat_surat" class="col-sm-3 col-form-label">Sifat Surat</label>
+                                    <div class="col-sm-9">
+                                        <select name="sifat_surat" class="form-control" required>
                                             <option value="">Pilih..</option>
-                                            <option value="Asli" {{ (old('status_surat') == 'Asli')? 'selected':''; }}>Asli</option>
-                                            <option value="Tembusan" {{ (old('status_surat') == 'Tembusan')? 'selected':''; }}>Tembusan</option>
+                                            <option value="Biasa" {{ (old('sifat_surat') == 'Biasa')? 'selected':''; }}>Biasa</option>
+                                            <option value="Segera" {{ (old('sifat_surat') == 'Segera')? 'selected':''; }}>Segera</option>
+                                            <option value="Sangat Segera" {{ (old('sifat_surat') == 'Sangat Segera')? 'selected':''; }}>Sangat Segera</option>
                                         </select>
                                     </div>
-                                    @error('status_surat')
+                                    @error('sifat_surat')
                                         <div class="invalid-feedback">
                                             {{ $message; }}
                                         </div>

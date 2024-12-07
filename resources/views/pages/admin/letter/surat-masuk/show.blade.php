@@ -58,28 +58,28 @@
                                             <td>{{ $item->no_surat }}</td>
                                         </tr>
                                         <tr>
-                                            <th>Tanggal Surat</th>
-                                            <td>{{ $item->tanggal_surat }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Tanggal Diterima</th>
-                                            <td>{{ $item->tanggal_diterima }}</td>
-                                        </tr>
-                                        <tr>
                                             <th>Pengirim Surat</th>
                                             <td>{{ $item->pengirim }}</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Jenis Surat</th>
-                                            <td>{{ $item->jenis_surat }}</td>
                                         </tr>
                                         <tr>
                                             <th>Perihal</th>
                                             <td>{{ $item->perihal }}</td>
                                         </tr>
                                         <tr>
-                                            <th>Status Surat</th>
-                                            <td>{{ $item->status_surat }}</td>
+                                            <th>Tanggal Surat</th>
+                                            <td>{{ $item->tanggal_surat }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Isi Singkat</th>
+                                            <td>{{ $item->isi_singkat }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tanggal Diterima</th>
+                                            <td>{{ $item->tanggal_diterima }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Sifat Surat</th>
+                                            <td>{{ $item->sifat_surat }}</td>
                                         </tr>
                                         <tr>
                                         <tr>
@@ -108,7 +108,6 @@
                                                 @endif
                                             </td>
                                         </tr>
-
                                         @if (auth()->user()->role == 'kepsek' && $item->status == '2' && $item->status_disposisi == '0')
                                         <tr>
                                             <th></th>
@@ -165,6 +164,37 @@
                                             </td>
                                         </tr>
                                         @endif
+                                        <tr>
+                                            <th id="isi_disposisi">Isi Disposisi</th>
+                                            <td id="isi_disposisiText">
+                                                @if ($item->isi_disposisi == '')
+                                                    <i>Belum ada isi disposisi</i>
+                                                @else
+                                                    {{ $item->isi_disposisi }}
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        @if (auth()->user()->role == 'guru' && $item->status == '3' && $item->status_disposisi == '1')
+                                        <tr>
+                                            <th></th>
+                                            <td>
+                                                <!-- Tombol untuk memilih apakah akan disposisikan atau ditolak -->
+                                                <button type="button" class="btn btn-warning" id="terimaBtn">Terima Berkas</button>
+                                            </td>
+                                        </tr>
+                                        <!-- Form Isi Disposisi -->
+                                        <tr id="ini" style="display:none;">
+                                            <th>Balas Disposisi</th>
+                                            <td>
+                                                <form action="{{ url(auth()->user()->role . '/surat-masuk/' . $item->id . '/terima_berkas') }}" method="POST" enctype="multipart/form-data">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <textarea name="isi_disposisi" id="balas_disposisi" class="form-control" rows="3" placeholder="Masukkan balasan disposisi"></textarea>
+                                                    <button type="submit" class="btn btn-success mt-2">Kirim</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        @endif
 
                                     </tbody>
                                 </table>
@@ -187,7 +217,6 @@
                                 <i class="fa fa-download" aria-hidden="true"></i> &nbsp; Download Surat
                             </a>
                         </div>
-
                         <div class="card-body">
                             <div class="mb-3 row">
                                 <object data="{{ Storage::url($item->file_surat) }}" type="application/pdf" width="100%" height="500">
@@ -211,24 +240,35 @@
 
 @push('addon-script')
   <script>
-    document.getElementById('disposisiBtn').addEventListener('click', function() {
-        document.getElementById('disposisi').style.display = 'none';
-        document.getElementById('disposisiText').style.display = 'none';
-        document.getElementById('catatan').style.display = 'none';
-        document.getElementById('catatanText').style.display = 'none';
-        document.getElementById('disposisiForm').style.display = 'table-row';
-        document.getElementById('tolakForm').style.display = 'none';
+    document.addEventListener('DOMContentLoaded', function() {
+        // Delegated Event Listener untuk semua tombol
+        document.body.addEventListener('click', function(event) {
+            // Cek jika tombol yang diklik adalah Terima Berkas
+            if (event.target && event.target.id === 'terimaBtn') {
+                document.getElementById('isi_disposisi').style.display = 'none';
+                document.getElementById('isi_disposisiText').style.display = 'none';
+                document.getElementById('ini').style.display = 'table-row';  // Menampilkan form disposisi
+            }
+            // Cek jika tombol yang diklik adalah Disposisikan
+            if (event.target && event.target.id === 'disposisiBtn') {
+                document.getElementById('disposisi').style.display = 'none';
+                document.getElementById('disposisiText').style.display = 'none';
+                document.getElementById('catatan').style.display = 'none';
+                document.getElementById('catatanText').style.display = 'none';
+                document.getElementById('disposisiForm').style.display = 'table-row';
+                document.getElementById('tolakForm').style.display = 'none';
+            }
+            // Cek jika tombol yang diklik adalah Tolak
+            if (event.target && event.target.id === 'tolakBtn') {
+                document.getElementById('disposisi').style.display = 'none';
+                document.getElementById('disposisiText').style.display = 'none';
+                document.getElementById('catatan').style.display = 'none';
+                document.getElementById('catatanText').style.display = 'none';
+                document.getElementById('tolakForm').style.display = 'table-row';
+                document.getElementById('disposisiForm').style.display = 'none';
+            }
+        });
     });
-
-    document.getElementById('tolakBtn').addEventListener('click', function() {
-        document.getElementById('disposisi').style.display = 'none';
-        document.getElementById('disposisiText').style.display = 'none';
-        document.getElementById('catatan').style.display = 'none';
-        document.getElementById('catatanText').style.display = 'none';
-        document.getElementById('tolakForm').style.display = 'table-row';
-        document.getElementById('disposisiForm').style.display = 'none';
-    });
-
 
     $(document).ready(function() {
     // Inisialisasi Select2 pada elemen dengan class 'form-select'
@@ -239,7 +279,6 @@
         theme: "bootstrap-5"
     
     });
-    });
-    
+    });    
     </script>
 @endpush

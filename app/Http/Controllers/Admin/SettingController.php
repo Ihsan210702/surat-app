@@ -70,7 +70,18 @@ class SettingController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validatedData = $request->validate([
+            'name' => 'required|max:255',
+            'email' => 'required|email:dns',
+        ]);
+
+        $item = User::findOrFail($id);
+
+        $item->update($validatedData);
+
+        return redirect()
+            ->to('/' . auth()->user()->role . '/setting')
+            ->with('success', 'Sukses! Data Pengguna telah diperbarui');
     }
 
     /**
@@ -103,7 +114,7 @@ class SettingController extends Controller
         $item->save();
 
         return redirect()
-                ->route('user.index')
+                ->to('/' . auth()->user()->role . '/setting')
                 ->with('success', 'Sukses! Photo Pengguna telah diperbarui');
     }
 
@@ -123,7 +134,7 @@ class SettingController extends Controller
         User::find(auth()->user()->id)->update(['password'=> Hash::make($request->new_password)]);
    
         return redirect()
-                ->route('change-password')
+                ->to('/' . auth()->user()->role . '/setting')
                 ->with('success', 'Sukses! Password telah diperbarui');
     }
 }

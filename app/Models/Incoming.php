@@ -13,16 +13,17 @@ class Incoming extends Model
     protected $table = 'incoming_mails'; // Ganti dengan nama tabel Anda
     protected $fillable = [
         'no_surat',
-        'tanggal_surat',
         'pengirim',
-        'jenis_surat',
-        'tanggal_diterima',
         'perihal',
-        'status_surat',
+        'tanggal_surat',
+        'isi_singkat',
+        'tanggal_diterima',
+        'sifat_surat',
         'file_surat',
         'status',
         'tujuan_disposisi',
         'catatan_disposisi',
+        'isi_disposisi',
         'status_disposisi'
     ];
 

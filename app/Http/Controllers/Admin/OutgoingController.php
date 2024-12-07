@@ -135,8 +135,9 @@ class OutgoingController extends Controller
             'no_surat' => 'required',
             'tanggal_surat' => 'required|date',
             'tujuan' => 'required|string|max:255',
-            'jenis_surat' => 'required|string|max:255',
             'perihal' => 'required|string|max:255',
+            'isi_singkat' => 'required|string',
+            'sifat_surat' => 'required|in:Biasa,Segera,Sangat Segera',
             'file_surat' => 'required|mimes:pdf|file',
         ]);
 
@@ -188,8 +189,9 @@ class OutgoingController extends Controller
             'no_surat' => 'required',
             'tanggal_surat' => 'required|date',
             'tujuan' => 'required|string|max:255',
-            'jenis_surat' => 'required|string|max:255',
             'perihal' => 'required|string|max:255',
+            'isi_singkat' => 'required|string',
+            'sifat_surat' => 'required|in:Biasa,Segera,Sangat Segera',
             'file_surat' => 'mimes:pdf|file',
         ]);
 

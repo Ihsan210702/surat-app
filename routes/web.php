@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ArsipController;
 use App\Http\Controllers\Admin\DisposisiController;
 use App\Http\Controllers\Admin\IncomingController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\Admin\OutgoingController;
 use App\Http\Controllers\Admin\UserController;
@@ -83,6 +84,8 @@ Route::prefix('admin')->middleware('authAdmin')->group(function () {
     Route::resource('/setting', SettingController::class, [
         'except' => ['show']
     ]);
+    Route::get('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::put('/setting/update/{id}', [SettingController::class, 'update'])->name('update-profile');
     Route::get('/setting/password', [SettingController::class, 'change_password'])->name('change-password');
     Route::post('/setting/upload-profile', [SettingController::class, 'upload_profile'])->name('profile-upload');
     Route::post('/change-password', [SettingController::class, 'update_password'])->name('update.password');
@@ -114,6 +117,7 @@ Route::prefix('kepsek')->middleware('authKepsek')->group(function () {
     Route::resource('setting', SettingController::class, [
         'except' => ['show']
     ]);
+    Route::get('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::get('setting/password', [SettingController::class, 'change_password'])->name('change-password');
     Route::post('setting/upload-profile', [SettingController::class, 'upload_profile'])->name('profile-upload');
     Route::post('change-password', [SettingController::class, 'update_password'])->name('update.password');
@@ -127,7 +131,7 @@ Route::prefix('guru')->middleware('authGuru')->group(function () {
      Route::get('surat-masuk', [IncomingController::class, 'incoming_mail'])->name('surat-masuk');
      Route::get('surat-masuk/{id}/show', [IncomingController::class, 'show_incoming'])->name('letter.show_incoming');
      Route::get('surat-masuk/download/{id}', [IncomingController::class, 'download_surat_masuk'])->name('download-surat-masuk-guru');
-     Route::get('surat-masuk/{id}/terima_berkas', [IncomingController::class, 'terima_berkas']);
+     Route::put('surat-masuk/{id}/terima_berkas', [IncomingController::class, 'terima_berkas']);
      //surat-keluar
      Route::get('surat-keluar', [OutgoingController::class, 'outgoing_mail'])->name('surat-keluar');
      Route::get('surat-keluar/{id}/show', [OutgoingController::class, 'show_outgoing'])->name('letter.show_outgoing');
@@ -143,6 +147,7 @@ Route::prefix('guru')->middleware('authGuru')->group(function () {
     Route::resource('setting', SettingController::class, [
         'except' => ['show']
     ]);
+    Route::get('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::get('setting/password', [SettingController::class, 'change_password'])->name('change-password');
     Route::post('setting/upload-profile', [SettingController::class, 'upload_profile'])->name('profile-upload');
     Route::post('change-password', [SettingController::class, 'update_password'])->name('update.password');
@@ -183,6 +188,7 @@ Route::prefix('staff')->middleware('authStaff')->group(function () {
     Route::resource('setting', SettingController::class, [
         'except' => ['show']
     ]);
+    Route::get('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::get('setting/password', [SettingController::class, 'change_password'])->name('change-password');
     Route::post('setting/upload-profile', [SettingController::class, 'upload_profile'])->name('profile-upload');
     Route::post('change-password', [SettingController::class, 'update_password'])->name('update.password');

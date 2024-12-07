@@ -70,6 +70,14 @@
                                             <td>{{ $item->perihal }}</td>
                                         </tr>
                                         <tr>
+                                            <th>Isi Singkat</th>
+                                            <td>{{ $item->isi_singkat }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Sifat Surat</th>
+                                            <td>{{ $item->sifat_surat }}</td>
+                                        </tr>
+                                        <tr>
                                             <th id="catatan">Catatan</th>
                                             <td id="catatanText">
                                                 @if ($item->catatan == '')

@@ -15,47 +15,67 @@
     <!-- * * Note: * * Visible only on and above the lg breakpoint-->
     <form class="form-inline me-auto d-none d-lg-block me-3">
         <div class="input-group input-group-joined input-group-solid">
-
         </div>
     </form>
     <!-- Navbar Items-->
     <ul class="navbar-nav align-items-center ms-auto">
-        <!-- Navbar Search Dropdown-->
-        <!-- * * Note: * * Visible only below the lg breakpoint-->
-        @if(auth()->user()->unreadNotifications->count())
+       <!-- Notifications Dropdown -->
+       @if(auth()->check())
         <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle btn btn-primary text-white" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="fa fa-bell"></i><span class="badge badge-light">{{ auth()->user()->unreadNotifications->count() }}</span>
+            <a class="nav-link dropdown-toggle position-relative d-flex align-items-center" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-bell fs-4 text-primary"></i>&nbsp;
+                @php $unreadCount = auth()->user()->unreadNotifications->count(); @endphp
+                @if($unreadCount > 0)
+                    <span class="position-absolute badge rounded-pill bg-danger" style="top: -8px; right: 4px; font-size: 0.65rem; width: 15px; height: 15px; padding: 0; line-height: 18px; text-align: center;">
+                        {{ $unreadCount }}
+                    </span>
+                @endif
             </a>
-            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
-                <h6 class="dropdown-header">Notifikasi</h6>
-                @foreach(auth()->user()->unreadNotifications as $notification)
-                <a class="dropdown-item" href="#">
-                    <strong>{{ $notification->data['tipe_surat'] ?? 'Jenis Surat Tidak Diketahui' }}</strong><br>
-                    <strong>{{ $notification->data['jenis_surat'] ?? 'Jenis Surat Tidak Diketahui' }}</strong><br>
-                    <small class="text-muted">
-                        {{ \Carbon\Carbon::parse($notification->data['tanggal_surat'])->format('d M Y') }}
-                    </small>
-                    <div class="text-muted">
-                        {{ $notification->data['perihal'] ?? 'Tidak ada perihal' }}
-                    </div>
-                </a>
-                    <div class="dropdown-divider"></div>
-                @endforeach
-                <a class="dropdown-item text-center text-primary" href="#">Tandai semua telah dibaca</a>
+            <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 scrollable-menu" aria-labelledby="notificationDropdown" style="min-width: 320px; max-height: 400px; overflow-y: auto;">
+                <div class="dropdown-header bg-primary px-3 py-2 border-bottom">
+                    <h6 class="mb-0 text-white">Notifikasi</h6>
+                </div>
+                <div class="notifications-scroll">
+                    @if($unreadCount > 0)
+                        @foreach(auth()->user()->unreadNotifications as $notification)
+                            <div class="dropdown-item notification-item px-3 py-2 border-bottom">
+                                <div class="d-flex align-items-center mb-1">
+                                    <div class="notification-content flex-grow-1">
+                                        <a href="{{ route('notifications.read', $notification->id) }}" class="text-decoration-none text-dark">
+                                            <div class="d-flex justify-content-between">
+                                                <span class="fw-bold">{{ data_get($notification->data, 'tipe_surat', 'Tidak Diketahui') }}</span>
+                                                <small class="text-muted">
+                                                    {{ \Carbon\Carbon::parse(data_get($notification->data, 'tanggal_surat'))->diffForHumans() }}
+                                                </small>
+                                            </div>
+                                            <div class="fw-semibold">
+                                                {{ data_get($notification->data, 'jenis_surat', 'Tidak Diketahui') }} - 
+                                                <span class="text-muted small">
+                                                    {{ Str::limit(data_get($notification->data, 'perihal', 'Tidak ada perihal'), 100) }}
+                                                </span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                        <div class="dropdown-footer bg-light p-2 text-center">
+                    <button class="btn btn-sm btn-primary w-100 mark-all-read" data-action="/mark-all-read">
+                        <i class="bi bi-check2-all me-1"></i> Tandai Semua Telah Dibaca
+                    </button>
+                </div>
+                    @else
+                        <div class="dropdown-item px-3 py-2 text-center text-muted">
+                            Tidak ada notifikasi baru
+                        </div>
+                    @endif
+                </div>
             </div>
         </li>
-    @else
-        <li class="nav-item">
-            <div class="alert alert-secondary m-0" role="alert">
-                Tidak ada notifikasi baru.
-            </div>
-        </li>
-    @endif
-
+        @endif
 
         <!-- User Dropdown-->
-        <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
+        <li class="nav-item dropdown no-caret dropdown-user ms-4 me-lg-4">
             <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage"
                 href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="false">

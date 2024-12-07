@@ -74,22 +74,38 @@
                                     @enderror
                                 </div>
                                 <div class="mb-3 row">
-                                    <label for="jenis_surat" class="col-sm-3 col-form-label">Jenis Surat</label>
+                                    <label for="perihal" class="col-sm-3 col-form-label">Perihal</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control @error('jenis_surat') is-invalid @enderror" value="{{ old('jenis_surat') }}" name="jenis_surat" placeholder="Jenis Surat.." required>
+                                        <input type="text" class="form-control @error('perihal') is-invalid @enderror" value="{{ old('perihal') }}" name="perihal" placeholder="Perihal.." required>
                                     </div>
-                                    @error('jenis_surat')
+                                    @error('perihal')
                                         <div class="invalid-feedback">
                                             {{ $message; }}
                                         </div>
                                     @enderror
                                 </div>
                                 <div class="mb-3 row">
-                                    <label for="perihal" class="col-sm-3 col-form-label">Perihal</label>
+                                    <label for="isi_singkat" class="col-sm-3 col-form-label">Isi Singkat</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control @error('perihal') is-invalid @enderror" value="{{ old('perihal') }}" name="perihal" placeholder="Perihal.." required>
+                                        <textarea class="form-control @error('isi_singkat') is-invalid @enderror" name="isi_singkat" placeholder="Isi Singkat.." required>{{ old('isi_singkat') }}</textarea>
                                     </div>
-                                    @error('perihal')
+                                    @error('isi_singkat')
+                                        <div class="invalid-feedback">
+                                            {{ $message; }}
+                                        </div>
+                                    @enderror
+                                </div>
+                                <div class="mb-3 row">
+                                    <label for="sifat_surat" class="col-sm-3 col-form-label">Sifat Surat</label>
+                                    <div class="col-sm-9">
+                                        <select name="sifat_surat" class="form-control" required>
+                                            <option value="">Pilih..</option>
+                                            <option value="Biasa" {{ (old('sifat_surat') == 'Biasa')? 'selected':''; }}>Biasa</option>
+                                            <option value="Segera" {{ (old('sifat_surat') == 'Segera')? 'selected':''; }}>Segera</option>
+                                            <option value="Sangat Segera" {{ (old('sifat_surat') == 'Sangat Segera')? 'selected':''; }}>Sangat Segera</option>
+                                        </select>
+                                    </div>
+                                    @error('sifat_surat')
                                         <div class="invalid-feedback">
                                             {{ $message; }}
                                         </div>

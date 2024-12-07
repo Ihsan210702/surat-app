@@ -31,12 +31,12 @@ class IncomingController extends Controller
     {
         $validatedData = $request->validate([
             'no_surat' => 'required',
-            'tanggal_surat' => 'required|date',
             'pengirim' => 'required|string|max:255',
-            'jenis_surat' => 'required|string|max:255',
-            'tanggal_diterima' => 'required|date',
             'perihal' => 'required|string|max:255',
-            'status_surat' => 'required|in:Asli,Tembusan',
+            'tanggal_surat' => 'required|date',
+            'isi_singkat' => 'required|string',
+            'tanggal_diterima' => 'required|date',
+            'sifat_surat' => 'required|in:Biasa,Segera,Sangat Segera',
             'file_surat' => 'required|mimes:pdf|file',
         ]);
 
@@ -44,28 +44,21 @@ class IncomingController extends Controller
             $validatedData['file_surat'] = $request->file('file_surat')->store('public/surat-masuk');
         }
 
-
         $validatedData['status'] = '1';
         $validatedData['tujuan_disposisi'] = '';
         $validatedData['catatan_disposisi'] = '';
+        $validatedData['isi_disposisi'] = '';
         $validatedData['status_disposisi'] = '0';
 
         $surat = Incoming::create($validatedData);
         // Kirim notifikasi ke semua user
-        $users = User::all(); // Atau filter user sesuai kebutuhan
+        $users = User::whereIn('role', ['admin', 'staff'])->get(); // Hanya user dengan role tertentu
         foreach ($users as $user) {
             $user->notify(new SuratMasukNotification($surat));
         }
         return redirect()
             ->to('/' . auth()->user()->role . '/surat-masuk')
             ->with('success', 'Sukses! 1 Data Berhasil Disimpan');
-    }
-
-    public function outgoing_create()
-    {
-        return view('pages.admin.letter.surat-masuk.create_outgoing', [
-            
-        ]);
     }
 
     public function incoming_mail()
@@ -89,7 +82,8 @@ class IncomingController extends Controller
                 ->get();
             } elseif ($userRole == 'guru') {
                 $query = Incoming::whereJsonContains('tujuan_disposisi', (string)$userId)
-                 ->where('status_disposisi', '!=', '3')
+                ->where('status', '3')  // Harus status 3 
+                ->where('status_disposisi', '!=', '3')
                  ->latest()
                  ->get();
             } else {
@@ -178,8 +172,11 @@ class IncomingController extends Controller
                         </a>';
 
                     // Tampilkan tombol "Ubah" dan "Hapus" hanya jika role pengguna adalah "admin" atau "staff administrasi"
-                    if (in_array($item->status, [0, 1,2]) 
-                        // && $item->status_disposisi == '-1'
+                    // if (in_array($item->status, [0, 1,2]) 
+                    //     && (in_array($item->status_disposisi, [0, -1]))
+                    if (
+                        // Tombol Edit hanya muncul jika kondisi berikut:
+                        ($item->status == 0 || ($item->status == 1) || ($item->status == 2 && $item->status_disposisi == -1))
                         && (auth()->user()->role == 'admin' || auth()->user()->role == 'staff')) {
                         $buttons .= '
                             <a class="btn btn-primary btn-xs" href="' . url($prefix . '/surat-masuk/' . $item->id . '/edit') . '">
@@ -192,15 +189,6 @@ class IncomingController extends Controller
                                 </button>
                             </form>';
                     } 
-
-                    // Tambahkan tombol "Terima Berkas" khusus untuk role "guru" tanpa menghapus tombol "Detail"
-                    if (auth()->user()->role == 'guru' && $item->status_disposisi == '1') {
-                        $buttons .= '
-                            <a class="btn btn-warning btn-xs" href="' . url($prefix . '/surat-masuk/' . $item->id . '/terima_berkas') . '">
-                                <i class="fa fa-check"></i> &nbsp; Terima Berkas
-                            </a>';
-                    }
-
                     return $buttons;
 
                 })             
@@ -237,12 +225,12 @@ class IncomingController extends Controller
     {
         $validatedData = $request->validate([
             'no_surat' => 'required',
-            'tanggal_surat' => 'required|date',
             'pengirim' => 'required|string|max:255',
-            'jenis_surat' => 'required|string|max:255',
-            'tanggal_diterima' => 'required|date',
             'perihal' => 'required|string|max:255',
-            'status_surat' => 'required|in:Asli,Tembusan',
+            'tanggal_surat' => 'required|date',
+            'isi_singkat' => 'required|string',
+            'tanggal_diterima' => 'required|date',
+            'sifat_surat' => 'required|in:Biasa,Segera,Sangat Segera',
             'file_surat' => 'mimes:pdf|file',
         ]);
 
@@ -270,7 +258,6 @@ class IncomingController extends Controller
         $item = Incoming::findOrFail($id);
         // dd($item->letter_file);
         // dd(Storage::download('storage/' . $item->letter_file));
-
         return Storage::download($item->file_surat);
     }
     public function approve(Request $request, $id)
@@ -282,7 +269,11 @@ class IncomingController extends Controller
             'status_disposisi' => '0',
             'catatan_disposisi' => ''  // Mengosongkan hanya catatan disposisi
         ]);
-
+        // Notifikasi ke kepala sekolah
+        $kepalaSekolah = User::where('role', 'kepsek')->first();
+        if ($kepalaSekolah) {
+            $kepalaSekolah->notify(new SuratMasukNotification($item));
+        }
         return redirect()
             ->to('/' . auth()->user()->role . '/surat-masuk')
             ->with('success', 'Sukses! Surat diteruskan ke Kepala');
@@ -369,6 +360,16 @@ class IncomingController extends Controller
         // Simpan perubahan
         $incomingMail->save();
 
+        // Ambil daftar guru dari tujuan disposisi
+        $guruIds = json_decode($incomingMail->tujuan_disposisi);
+
+        // Kirim notifikasi ke setiap guru
+        foreach ($guruIds as $guruId) {
+            $guru = User::find($guruId);
+            if ($guru) {
+                $guru->notify(new SuratMasukNotification($incomingMail));
+            }
+        }
         return redirect()
             ->to('/' . auth()->user()->role . '/surat-masuk')
             ->with('success', 'Disposisi berhasil diteruskan.');
@@ -376,8 +377,12 @@ class IncomingController extends Controller
 
     public function terima_berkas(Request $request, $id)
     {
+         // Validasi data dari form
+         $request->validate([
+            'isi_disposisi' => 'required|string|max:255',
+        ]);
         $incomingMail = Incoming::findOrFail($id);
-        
+        $incomingMail->isi_disposisi = $request->input('isi_disposisi');
         // Ubah status_disposisi sesuai kebutuhan (misalnya menjadi 2 jika disposisi diteruskan)
         $incomingMail->status_disposisi = 2;
 

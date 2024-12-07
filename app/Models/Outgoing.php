@@ -15,8 +15,9 @@ class Outgoing extends Model
         'no_surat',
         'tanggal_surat',
         'tujuan',
-        'jenis_surat',
         'perihal',
+        'isi_singkat',
+        'sifat_surat',
         'file_surat',
         'status',
         'catatan'

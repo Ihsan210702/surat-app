@@ -25,7 +25,7 @@
             <!-- Account page navigation-->
             <nav class="nav nav-borders">
                 <a class="nav-link {{ (request()->is('admin/setting')) ? 'active ms-0' : '' }}" href="{{ route('setting.index') }}">Profil</a>
-                <a class="nav-link {{ (request()->is('admin/setting/change-password')) ? 'active ms-0' : '' }}" href="{{ route('change-password') }}">Ubah Password</a>
+                <a class="nav-link {{ (request()->is('admin/setting/change-password')) ? 'active ms-0' : '' }}" href="{{ route('setting.index') }}">Ubah Password</a>
             </nav>
             <hr class="mt-0 mb-4" />
             <div class="row">
@@ -84,7 +84,7 @@
                                     <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             @endif
-                            <form action="{{ route('user.update', $user->id) }}" method="POST">
+                            <form action="{{ route('update-profile', $user->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <!-- Form Group (username)-->

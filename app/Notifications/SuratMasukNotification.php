@@ -37,13 +37,26 @@ class SuratMasukNotification extends Notification
     // Menyusun pesan notifikasi untuk disimpan di database
     public function toDatabase($notifiable)
     {
+        // Dapatkan role pengguna
+        $role = $notifiable->role; // pastikan kolom role ada di tabel users
+
+        // Tentukan prefix berdasarkan role
+        $prefix = ($role == 'admin') ? 'admin' :
+        (($role == 'kepsek') ? 'kepsek' :
+        (($role == 'guru') ? 'guru' :
+        (($role == 'staff') ? 'staff' : 'user')));
+
+
+        // Susun URL dengan prefix yang sesuai
+        
+        $url = url($prefix . '/surat-masuk/' . $this->surat->id . '/show');
         return [
             'surat_id' => $this->surat->id,
             'jenis_surat' => $this->surat->jenis_surat, 
             'tipe_surat' => 'Surat Masuk', 
             'perihal' => $this->surat->perihal,
             'tanggal_surat' => $this->surat->tanggal_surat,
-            // 'url' => route('surat.show', $this->surat->id), // URL untuk melihat detail surat
+            'url' => $url, // URL untuk melihat detail surat
         ];
     }
     /**
