@@ -17,6 +17,7 @@ class Outgoing extends Model
         'tujuan',
         'perihal',
         'isi_singkat',
+        'lampiran',
         'sifat_surat',
         'file_surat',
         'status',

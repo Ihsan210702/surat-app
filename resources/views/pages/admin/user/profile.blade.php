@@ -24,8 +24,8 @@
         <div class="container-xl px-4 mt-4">
             <!-- Account page navigation-->
             <nav class="nav nav-borders">
-                <a class="nav-link {{ (request()->is('admin/setting')) ? 'active ms-0' : '' }}" href="{{ route('setting.index') }}">Profil</a>
-                <a class="nav-link {{ (request()->is('admin/setting/change-password')) ? 'active ms-0' : '' }}" href="{{ route('setting.index') }}">Ubah Password</a>
+                <a class="nav-link {{ (request()->is('url(auth()->user()->role/setting')) ? 'active ms-0' : '' }}" href="{{ url(auth()->user()->role . '/setting') }}">Profil</a>
+                <a class="nav-link {{ (request()->is('url(auth()->user()->role/setting/change-password')) ? 'active ms-0' : '' }}" href="{{ url(auth()->user()->role . '/setting/password') }}">Ubah Password</a>
             </nav>
             <hr class="mt-0 mb-4" />
             <div class="row">
@@ -57,7 +57,8 @@
                             <!-- Profile picture help block-->
                             <div class="small font-italic text-muted mb-4">JPG atau PNG tidak lebih besar dari 1 MB</div>
                             <!-- Profile picture upload button-->
-                            <form action="{{ route('profile-upload') }}" method="post" enctype="multipart/form-data">
+                            
+                            <form action="{{ url(auth()->user()->role . '/setting/upload-profile') }}" method="post" enctype="multipart/form-data">
                             @csrf
                             <input type="hidden" name="id" value="{{ $user->id }}">
                                 <input
@@ -84,7 +85,7 @@
                                     <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             @endif
-                            <form action="{{ route('update-profile', $user->id) }}" method="POST">
+                            <form action="{{ url(auth()->user()->role . '/setting/update/' . $user->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <!-- Form Group (username)-->

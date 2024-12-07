@@ -72,7 +72,7 @@ class UserController extends Controller
             'name' => 'required|max:255',
             'email' => 'required|email:dns|unique:users',
             'password' => 'required|min:5|max:255',
-            'role' => 'required|in:admin,staff administrasi,guru,kepala sekolah',
+            'role' => 'required|in:admin,staff,guru,kepsek',
         ]);
 
         $validatedData['password'] = Hash::make($validatedData['password']);
@@ -113,11 +113,24 @@ class UserController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|max:255',
             'email' => 'required|email:dns',
+            'nip' => 'required|max:255',
+            'password' => 'nullable|min:5|max:255',
         ]);
 
         $item = User::findOrFail($id);
 
-        $item->update($validatedData);
+        // Perbarui detail pengguna (nama dan email)
+        $item->name = $validatedData['name'];
+        $item->email = $validatedData['email'];
+        $item->nip = $validatedData['nip'];
+
+        // Perbarui password jika diisi
+        if ($request->has('password') && !empty($request->password)) {
+            $item->password = Hash::make($validatedData['password']);
+        }
+
+        // Simpan perubahan pengguna
+        $item->save();
 
         return redirect()
             ->to('/' . auth()->user()->role . '/user')
@@ -148,8 +161,14 @@ class UserController extends Controller
 
         //dd($item);
 
-        if ($request->file('profile')) {
-            Storage::delete($item->profile);
+        // Cek jika ada file gambar profil baru
+        if ($request->hasFile('profile')) {
+            // Menghapus file lama jika ada
+            if ($item->profile) {
+                Storage::delete($item->profile);
+            }
+
+            // Menyimpan file baru dan mendapatkan path-nya
             $item->profile = $request->file('profile')->store('assets/profile-images');
         }
 

@@ -78,6 +78,10 @@
                                             <td>{{ $item->tanggal_diterima }}</td>
                                         </tr>
                                         <tr>
+                                            <th>Lampiran</th>
+                                            <td>{{ $item->lampiran }}</td>
+                                        </tr>
+                                        <tr>
                                             <th>Sifat Surat</th>
                                             <td>{{ $item->sifat_surat }}</td>
                                         </tr>

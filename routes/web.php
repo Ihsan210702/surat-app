@@ -81,10 +81,11 @@ Route::prefix('admin')->middleware('authAdmin')->group(function () {
     Route::get('/arsip', [ArsipController::class, 'index']);
     //user
     Route::resource('/user', UserController::class);
-    Route::resource('/setting', SettingController::class, [
-        'except' => ['show']
-    ]);
+    // Route::resource('/setting', SettingController::class, [
+    //     'except' => ['show']
+    // ]);
     Route::get('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::get('setting', [SettingController::class, 'index']);
     Route::put('/setting/update/{id}', [SettingController::class, 'update'])->name('update-profile');
     Route::get('/setting/password', [SettingController::class, 'change_password'])->name('change-password');
     Route::post('/setting/upload-profile', [SettingController::class, 'upload_profile'])->name('profile-upload');
@@ -114,10 +115,12 @@ Route::prefix('kepsek')->middleware('authKepsek')->group(function () {
     Route::get('/arsip', [ArsipController::class, 'index']);
     //user
     Route::resource('user', UserController::class);
-    Route::resource('setting', SettingController::class, [
-        'except' => ['show']
-    ]);
+    // Route::resource('setting', SettingController::class, [
+    //     'except' => ['show']
+    // ]);
     Route::get('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::get('setting', [SettingController::class, 'index']);
+    Route::put('/setting/update/{id}', [SettingController::class, 'update'])->name('update-profile');
     Route::get('setting/password', [SettingController::class, 'change_password'])->name('change-password');
     Route::post('setting/upload-profile', [SettingController::class, 'upload_profile'])->name('profile-upload');
     Route::post('change-password', [SettingController::class, 'update_password'])->name('update.password');
@@ -144,10 +147,12 @@ Route::prefix('guru')->middleware('authGuru')->group(function () {
     Route::get('/arsip', [ArsipController::class, 'index']);
     //user
     Route::resource('user', UserController::class);
-    Route::resource('setting', SettingController::class, [
-        'except' => ['show']
-    ]);
+    // Route::resource('setting', SettingController::class, [
+    //     'except' => ['show']
+    // ]);
     Route::get('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::get('setting', [SettingController::class, 'index']);
+    Route::put('/setting/update/{id}', [SettingController::class, 'update'])->name('update-profile');
     Route::get('setting/password', [SettingController::class, 'change_password'])->name('change-password');
     Route::post('setting/upload-profile', [SettingController::class, 'upload_profile'])->name('profile-upload');
     Route::post('change-password', [SettingController::class, 'update_password'])->name('update.password');
@@ -185,10 +190,12 @@ Route::prefix('staff')->middleware('authStaff')->group(function () {
     Route::get('/arsip', [ArsipController::class, 'index']);
     //user
     Route::resource('user', UserController::class);
-    Route::resource('setting', SettingController::class, [
-        'except' => ['show']
-    ]);
+    // Route::resource('setting', SettingController::class, [
+    //     'except' => ['show']
+    // ]);
+    Route::get('setting', [SettingController::class, 'index']);
     Route::get('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::put('/setting/update/{id}', [SettingController::class, 'update'])->name('update-profile');
     Route::get('setting/password', [SettingController::class, 'change_password'])->name('change-password');
     Route::post('setting/upload-profile', [SettingController::class, 'upload_profile'])->name('profile-upload');
     Route::post('change-password', [SettingController::class, 'update_password'])->name('update.password');

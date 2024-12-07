@@ -106,7 +106,7 @@
                 @elseif (auth()->user()->role == 'guru')
                     <a href="{{ url('guru/setting') }}">
                 @elseif (auth()->user()->role == 'kepsek')
-                    <a href="{{ url('kepala-sekolah/setting') }}">
+                    <a href="{{ url('kepsek/setting') }}">
                 @elseif (auth()->user()->role == 'staff')
                     <a href="{{ url('staff/setting') }}">
                 @endif

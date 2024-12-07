@@ -137,6 +137,7 @@ class OutgoingController extends Controller
             'tujuan' => 'required|string|max:255',
             'perihal' => 'required|string|max:255',
             'isi_singkat' => 'required|string',
+            'lampiran' => 'required|numeric',
             'sifat_surat' => 'required|in:Biasa,Segera,Sangat Segera',
             'file_surat' => 'required|mimes:pdf|file',
         ]);
@@ -191,6 +192,7 @@ class OutgoingController extends Controller
             'tujuan' => 'required|string|max:255',
             'perihal' => 'required|string|max:255',
             'isi_singkat' => 'required|string',
+            'lampiran' => 'required|numeric',
             'sifat_surat' => 'required|in:Biasa,Segera,Sangat Segera',
             'file_surat' => 'mimes:pdf|file',
         ]);

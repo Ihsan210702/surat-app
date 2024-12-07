@@ -74,6 +74,17 @@
                                     @enderror
                                 </div>
                                 <div class="mb-3 row">
+                                    <label for="tanggal_surat" class="col-sm-3 col-form-label">Tanggal Surat</label>
+                                    <div class="col-sm-9">
+                                        <input type="date" class="form-control @error('tanggal_surat') is-invalid @enderror" value="{{ old('tanggal_surat') }}" name="tanggal_surat" required>
+                                    </div>
+                                    @error('tanggal_surat')
+                                        <div class="invalid-feedback">
+                                            {{ $message; }}
+                                        </div>
+                                    @enderror
+                                </div>
+                                <div class="mb-3 row">
                                     <label for="isi_singkat" class="col-sm-3 col-form-label">Isi Singkat</label>
                                     <div class="col-sm-9">
                                         <textarea class="form-control @error('isi_singkat') is-invalid @enderror" name="isi_singkat" placeholder="Isi Singkat.." required>{{ old('isi_singkat') }}</textarea>
@@ -90,6 +101,17 @@
                                         <input type="date" class="form-control @error('tanggal_diterima') is-invalid @enderror" value="{{ old('tanggal_diterima') }}" name="tanggal_diterima" required>
                                     </div>
                                     @error('tanggal_diterima')
+                                        <div class="invalid-feedback">
+                                            {{ $message; }}
+                                        </div>
+                                    @enderror
+                                </div>
+                                <div class="mb-3 row">
+                                    <label for="lampiran" class="col-sm-3 col-form-label">Lampiran</label>
+                                    <div class="col-sm-9">
+                                        <input type="number" class="form-control @error('lampiran') is-invalid @enderror" value="{{ old('lampiran') }}" name="lampiran" required>
+                                    </div>
+                                    @error('lampiran')
                                         <div class="invalid-feedback">
                                             {{ $message; }}
                                         </div>

@@ -36,9 +36,11 @@
                     <div class="card card-header-actions mb-4">
                         <div class="card-header">
                             List Pengguna
-                            <a class="btn btn-sm btn-primary" href="{{ url('admin/user/create') }}">
-                                Tambah Pengguna Baru
-                            </a>
+                            @if(auth()->user()->role === 'admin')
+                                <a class="btn btn-sm btn-primary" href="{{ url('admin/user/create') }}">
+                                    Tambah Pengguna Baru
+                                </a>
+                            @endif
                         </div>
                         <div class="card-body">
                             {{-- Alert --}}
@@ -66,9 +68,12 @@
                                     <tr>
                                         <th width="10">No.</th>
                                         <th>Nama</th>
-                                        <th>Email</th>
+                                        <th>Jabatan</th>
                                         <th>NIP</th>
-                                        <th>Aksi</th>
+                                        @if(auth()->user()->role === 'admin')
+                                            <th>Email</th>
+                                            <th>Aksi</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -100,20 +105,46 @@
                     name: 'name'
                 },
                 {
-                    data: 'email',
-                    name: 'email'
+                    data: 'role',
+                    name: 'role',
+                    render: function(data, type, row) {
+                        let roleLabel = '';
+                        switch (data) {
+                            case 'guru':
+                                roleLabel = 'Guru';
+                                break;
+                            case 'admin':
+                                roleLabel = 'Kepala TU';
+                                break;
+                            case 'staff':
+                                roleLabel = 'Staff TU';
+                                break;
+                            case 'kepsek':
+                                roleLabel = 'Kepala Sekolah';
+                                break;
+                            default:
+                                roleLabel = 'Role Tidak Dikenal';
+                        }
+                        return roleLabel;
+                    }
                 },
                 {
                     data: 'nip',
                     name: 'nip'
                 },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                    searcable: false,
-                    width: '15%'
-                },
+                @if(auth()->user()->role === 'admin')
+                    {
+                        data: 'email',
+                        name: 'email'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searcable: false,
+                        width: '15%'
+                    },
+                @endif
             ]
         });
     </script>

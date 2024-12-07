@@ -72,6 +72,18 @@
                                         @enderror
                                     </div>   
                                 </div>
+                                <div class="row gx-3 mb-3">
+                                    <!-- Form Group (first name)-->
+                                    <div class="col-md-6">
+                                        <label class="small mb-1" for="name">NIP</label>
+                                        <input class="form-control @error('nip') is-invalid @enderror" name="nip" type="text" value="{{ $item->nip }}"  required/>
+                                        @error('nip')
+                                            <div class="invalid-feedback">
+                                                {{ $message; }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
                                 <!-- Form Group (Password)-->
                                 <div class="mb-3">
                                     <div class="col-md-6">

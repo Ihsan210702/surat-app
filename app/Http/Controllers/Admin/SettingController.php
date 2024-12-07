@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Rules\MatchOldPassword;
 use App\Http\Controllers\Controller;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -16,9 +15,9 @@ class SettingController extends Controller
     public function index()
     {
         $user = Auth::user();
-
+        
         return view('pages.admin.user.profile',[
-            'user' => $user
+            'user' => $user,
         ]);
     }
 
@@ -106,9 +105,15 @@ class SettingController extends Controller
 
         //dd($item);
 
-        if($request->file('profile')){
-            Storage::delete($item->profile);
-            $item->profile = $request->file('profile')->store('assets/profile-images');
+        // Cek jika ada file gambar profil baru
+        if ($request->hasFile('profile')) {
+            // Menghapus file lama jika ada
+            if ($item->profile) {
+                Storage::delete($item->profile);
+            }
+
+            // Menyimpan file baru dan mendapatkan path-nya
+            $item->profile = $request->file('profile')->store('public/profile-images');
         }
 
         $item->save();

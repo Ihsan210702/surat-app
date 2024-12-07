@@ -18,6 +18,7 @@ class Incoming extends Model
         'tanggal_surat',
         'isi_singkat',
         'tanggal_diterima',
+        'lampiran',
         'sifat_surat',
         'file_surat',
         'status',

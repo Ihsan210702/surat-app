@@ -24,8 +24,8 @@
         <div class="container-xl px-4 mt-4">
             <!-- Account page navigation-->
             <nav class="nav nav-borders">
-                <a class="nav-link {{ (request()->is('admin/setting')) ? 'active ms-0' : '' }}" href="{{ route('setting.index') }}">Profil</a>
-                <a class="nav-link {{ (request()->is('admin/setting/password')) ? 'active ms-0' : '' }}" href="{{ route('change-password') }}">Ubah Password</a>
+            <a class="nav-link {{ (request()->is('url(auth()->user()->role/setting')) ? 'active ms-0' : '' }}" href="{{ url(auth()->user()->role . '/setting') }}">Profil</a>
+            <a class="nav-link {{ (request()->is('url(auth()->user()->role/setting/change-password')) ? 'active ms-0' : '' }}" href="{{ url(auth()->user()->role . '/setting/password') }}">Ubah Password</a>
             </nav>
             <hr class="mt-0 mb-4" />
             <div class="row">
@@ -54,7 +54,7 @@
                                     <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             @endif
-                            <form action="{{ route('update.password') }}" method="POST">
+                            <form action="{{ url(auth()->user()->role . '/change-password') }}" method="POST">
                                 @csrf
                                 <!-- Form Group (current password)-->
                                 <div class="mb-3">

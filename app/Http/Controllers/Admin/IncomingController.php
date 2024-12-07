@@ -36,6 +36,7 @@ class IncomingController extends Controller
             'tanggal_surat' => 'required|date',
             'isi_singkat' => 'required|string',
             'tanggal_diterima' => 'required|date',
+            'lampiran'  => 'required|numeric',
             'sifat_surat' => 'required|in:Biasa,Segera,Sangat Segera',
             'file_surat' => 'required|mimes:pdf|file',
         ]);
@@ -230,6 +231,7 @@ class IncomingController extends Controller
             'tanggal_surat' => 'required|date',
             'isi_singkat' => 'required|string',
             'tanggal_diterima' => 'required|date',
+            'lampiran' => 'required|numeric',
             'sifat_surat' => 'required|in:Biasa,Segera,Sangat Segera',
             'file_surat' => 'mimes:pdf|file',
         ]);

@@ -67,6 +67,10 @@
                     <div class="nav-link-icon"><i data-feather="activity"></i></div>
                     Dashboard
                 </a>
+                <a class="nav-link {{ request()->is('staff/user*') ? 'active' : '' }}" href="{{ url('staff/user') }}">
+                    <div class="nav-link-icon"><i data-feather="user"></i></div>
+                    Data User
+                </a>
                 <a class="nav-link {{ request()->is('staff/surat-masuk') ? 'active' : '' }}"
                     href="{{ url('staff/surat-masuk') }}">
                     <div class="nav-link-icon"><i data-feather="arrow-right"></i></div>
@@ -91,7 +95,6 @@
                     <div class="nav-link-icon"><i data-feather="activity"></i></div>
                     Dashboard
                 </a>
-
                 <a class="nav-link {{ request()->is('kepsek/user*') ? 'active' : '' }}"
                     href="{{ url('kepsek/user/') }}">
                     <div class="nav-link-icon"><i data-feather="user"></i></div>
@@ -120,6 +123,10 @@
                     href="{{ url('guru/dashboard') }}">
                     <div class="nav-link-icon"><i data-feather="activity"></i></div>
                     Dashboard
+                </a>
+                <a class="nav-link {{ request()->is('guru/user*') ? 'active' : '' }}" href="{{ url('guru/user') }}">
+                    <div class="nav-link-icon"><i data-feather="user"></i></div>
+                    Data User
                 </a>
                 <a class="nav-link {{ request()->is('guru/surat-masuk') ? 'active' : '' }}"
                     href="{{ url('guru/surat-masuk') }}">
