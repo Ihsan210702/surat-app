@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 07, 2024 at 04:23 PM
+-- Generation Time: Dec 17, 2024 at 09:36 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,22 @@ SET time_zone = "+00:00";
 --
 -- Database: `surat-app`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `disposisi_mails`
+--
+
+CREATE TABLE `disposisi_mails` (
+  `id` int(11) NOT NULL,
+  `id_surat_masuk` int(11) NOT NULL,
+  `user_id` bigint(20) UNSIGNED NOT NULL,
+  `status_dibaca` int(11) NOT NULL,
+  `tanggapan` varchar(255) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -55,20 +71,11 @@ CREATE TABLE `incoming_mails` (
   `sifat_surat` enum('Biasa','Segera','Sangat Segera') NOT NULL,
   `file_surat` varchar(255) NOT NULL,
   `status` int(11) NOT NULL,
-  `tujuan_disposisi` varchar(255) NOT NULL,
   `catatan_disposisi` varchar(255) NOT NULL,
-  `isi_disposisi` varchar(255) NOT NULL,
   `status_disposisi` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `incoming_mails`
---
-
-INSERT INTO `incoming_mails` (`id`, `no_surat`, `tanggal_surat`, `pengirim`, `tanggal_diterima`, `perihal`, `isi_singkat`, `lampiran`, `sifat_surat`, `file_surat`, `status`, `tujuan_disposisi`, `catatan_disposisi`, `isi_disposisi`, `status_disposisi`, `created_at`, `updated_at`) VALUES
-(13, '420/B/230.242/2024', '2024-12-05', 'Dinas Pendidikan', '2024-12-06', 'Pengajuan', 'Tentang Perluasan pembangunan ini', 0, 'Sangat Segera', 'public/surat-masuk/TKQjGwsBgjQdEIp7QaQtUnQsFOMMaGs0Tg9xP1Uw.pdf', 3, '[\"3\"]', 'Segera tindak lanjuti oke', 'oke segera saya tindak lanjuti pak', 3, '2024-12-05 19:00:21', '2024-12-06 19:57:03');
 
 -- --------------------------------------------------------
 
@@ -113,32 +120,6 @@ CREATE TABLE `notifications` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `notifications`
---
-
-INSERT INTO `notifications` (`id`, `type`, `notifiable_type`, `notifiable_id`, `data`, `read_at`, `created_at`, `updated_at`) VALUES
-('00161aff-1945-4bc5-bbfb-21c249ca8cf6', 'App\\Notifications\\SuratKeluarNotification', 'App\\Models\\User', 2, '{\"surat_id\":14,\"jenis_surat\":null,\"tipe_surat\":\"Surat Keluar\",\"perihal\":\"Pengajuan\",\"tanggal_surat\":\"2024-12-07\"}', NULL, '2024-12-06 20:16:39', '2024-12-06 20:16:39'),
-('16f1f1bf-48b1-45fc-afef-d24b7284eb3d', 'App\\Notifications\\SuratKeluarNotification', 'App\\Models\\User', 4, '{\"surat_id\":14,\"jenis_surat\":null,\"tipe_surat\":\"Surat Keluar\",\"perihal\":\"Pengadaan\",\"tanggal_surat\":\"2024-12-07\"}', NULL, '2024-12-06 20:23:04', '2024-12-06 20:23:04'),
-('257a0060-5042-42ea-a869-f05afcf97f89', 'App\\Notifications\\SuratMasukNotification', 'App\\Models\\User', 2, '{\"surat_id\":14,\"jenis_surat\":null,\"tipe_surat\":\"Surat Masuk\",\"perihal\":\"Pengadaan\",\"tanggal_surat\":\"2024-12-07\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/staff\\/surat-masuk\\/14\\/show\"}', NULL, '2024-12-07 04:50:51', '2024-12-07 04:50:51'),
-('27fb70cd-6971-4a3f-92f2-0cfc0b3a8f40', 'App\\Notifications\\SuratMasukNotification', 'App\\Models\\User', 3, '{\"surat_id\":13,\"jenis_surat\":null,\"tipe_surat\":\"Surat Masuk\",\"perihal\":\"Pengajuan\",\"tanggal_surat\":\"2024-12-05\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/guru\\/surat-masuk\\/13\\/show\"}', NULL, '2024-12-06 19:55:20', '2024-12-06 19:55:20'),
-('3464187a-584a-4b36-a9ba-181e8b4af68f', 'App\\Notifications\\SuratKeluarNotification', 'App\\Models\\User', 6, '{\"surat_id\":15,\"jenis_surat\":null,\"tipe_surat\":\"Surat Keluar\",\"perihal\":\"Pengadaan\",\"tanggal_surat\":\"2024-12-13\"}', NULL, '2024-12-07 04:54:45', '2024-12-07 04:54:45'),
-('3464ba9a-ba16-4bb5-b3a2-9cdebbccd9e6', 'App\\Notifications\\SuratKeluarNotification', 'App\\Models\\User', 3, '{\"surat_id\":15,\"jenis_surat\":null,\"tipe_surat\":\"Surat Keluar\",\"perihal\":\"Pengadaan\",\"tanggal_surat\":\"2024-12-13\"}', NULL, '2024-12-07 04:54:45', '2024-12-07 04:54:45'),
-('45eb4e41-e9f6-4336-b909-611514a0dbae', 'App\\Notifications\\SuratMasukNotification', 'App\\Models\\User', 1, '{\"surat_id\":14,\"jenis_surat\":null,\"tipe_surat\":\"Surat Masuk\",\"perihal\":\"Pengadaan\",\"tanggal_surat\":\"2024-12-07\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/admin\\/surat-masuk\\/14\\/show\"}', NULL, '2024-12-07 04:50:51', '2024-12-07 04:50:51'),
-('4c44a36d-5b16-4c54-880a-61763e64b770', 'App\\Notifications\\SuratKeluarNotification', 'App\\Models\\User', 3, '{\"surat_id\":14,\"jenis_surat\":null,\"tipe_surat\":\"Surat Keluar\",\"perihal\":\"Pengajuan\",\"tanggal_surat\":\"2024-12-07\"}', NULL, '2024-12-06 20:16:39', '2024-12-06 20:16:39'),
-('5276d53e-5fd6-45dc-bec1-2959e04ed0ce', 'App\\Notifications\\SuratMasukNotification', 'App\\Models\\User', 4, '{\"surat_id\":13,\"jenis_surat\":null,\"tipe_surat\":\"Surat Masuk\",\"perihal\":\"Pengajuan\",\"tanggal_surat\":\"2024-12-05\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/kepsek\\/surat-masuk\\/13\\/show\"}', NULL, '2024-12-05 19:28:12', '2024-12-05 19:28:12'),
-('5974fb89-d61d-429b-9514-68a91775e80a', 'App\\Notifications\\SuratKeluarNotification', 'App\\Models\\User', 5, '{\"surat_id\":14,\"jenis_surat\":null,\"tipe_surat\":\"Surat Keluar\",\"perihal\":\"Pengajuan\",\"tanggal_surat\":\"2024-12-07\"}', NULL, '2024-12-06 20:16:39', '2024-12-06 20:16:39'),
-('7afa856f-5cdf-4fe9-99c1-5cf86a618283', 'App\\Notifications\\SuratKeluarNotification', 'App\\Models\\User', 2, '{\"surat_id\":15,\"jenis_surat\":null,\"tipe_surat\":\"Surat Keluar\",\"perihal\":\"Pengadaan\",\"tanggal_surat\":\"2024-12-13\"}', NULL, '2024-12-07 04:54:45', '2024-12-07 04:54:45'),
-('864f4381-be48-4529-9c76-e9a9e42d2755', 'App\\Notifications\\SuratMasukNotification', 'App\\Models\\User', 5, '{\"surat_id\":13,\"jenis_surat\":null,\"tipe_surat\":\"Surat Masuk\",\"perihal\":\"Pengajuan\",\"tanggal_surat\":\"2024-12-05\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/admin\\/surat-masuk\\/13\\/show\"}', NULL, '2024-12-05 19:00:25', '2024-12-05 19:00:25'),
-('8b894174-440a-477a-a627-e89223d99de6', 'App\\Notifications\\SuratMasukNotification', 'App\\Models\\User', 1, '{\"surat_id\":13,\"jenis_surat\":null,\"tipe_surat\":\"Surat Masuk\",\"perihal\":\"Pengajuan\",\"tanggal_surat\":\"2024-12-05\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/admin\\/surat-masuk\\/13\\/show\"}', NULL, '2024-12-05 19:00:25', '2024-12-05 19:00:25'),
-('9573af13-95a5-4139-a00e-7d4eb6fac7a6', 'App\\Notifications\\SuratMasukNotification', 'App\\Models\\User', 3, '{\"surat_id\":13,\"jenis_surat\":null,\"tipe_surat\":\"Surat Masuk\",\"perihal\":\"Pengajuan\",\"tanggal_surat\":\"2024-12-05\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/guru\\/surat-masuk\\/13\\/show\"}', NULL, '2024-12-06 03:55:56', '2024-12-06 03:55:56'),
-('abe9f610-4309-49b8-8433-4fa480f49738', 'App\\Notifications\\SuratKeluarNotification', 'App\\Models\\User', 5, '{\"surat_id\":15,\"jenis_surat\":null,\"tipe_surat\":\"Surat Keluar\",\"perihal\":\"Pengadaan\",\"tanggal_surat\":\"2024-12-13\"}', NULL, '2024-12-07 04:54:45', '2024-12-07 04:54:45'),
-('c5f09671-28b0-4759-b70d-7edea8ba096d', 'App\\Notifications\\SuratKeluarNotification', 'App\\Models\\User', 1, '{\"surat_id\":15,\"jenis_surat\":null,\"tipe_surat\":\"Surat Keluar\",\"perihal\":\"Pengadaan\",\"tanggal_surat\":\"2024-12-13\"}', NULL, '2024-12-07 04:54:45', '2024-12-07 04:54:45'),
-('d03fd683-7208-4d44-97bc-656c2b07ddc8', 'App\\Notifications\\SuratKeluarNotification', 'App\\Models\\User', 1, '{\"surat_id\":14,\"jenis_surat\":null,\"tipe_surat\":\"Surat Keluar\",\"perihal\":\"Pengajuan\",\"tanggal_surat\":\"2024-12-07\"}', NULL, '2024-12-06 20:16:39', '2024-12-06 20:16:39'),
-('f2349b65-7fb2-402d-b975-f4ecd24c260e', 'App\\Notifications\\SuratMasukNotification', 'App\\Models\\User', 5, '{\"surat_id\":14,\"jenis_surat\":null,\"tipe_surat\":\"Surat Masuk\",\"perihal\":\"Pengadaan\",\"tanggal_surat\":\"2024-12-07\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/admin\\/surat-masuk\\/14\\/show\"}', NULL, '2024-12-07 04:50:51', '2024-12-07 04:50:51'),
-('fa7a965a-1413-4a0d-8e71-04f16a65f90c', 'App\\Notifications\\SuratKeluarNotification', 'App\\Models\\User', 6, '{\"surat_id\":14,\"jenis_surat\":null,\"tipe_surat\":\"Surat Keluar\",\"perihal\":\"Pengajuan\",\"tanggal_surat\":\"2024-12-07\"}', NULL, '2024-12-06 20:16:39', '2024-12-06 20:16:39'),
-('fd838aa7-3022-4a39-87d6-a70ad9830056', 'App\\Notifications\\SuratMasukNotification', 'App\\Models\\User', 2, '{\"surat_id\":13,\"jenis_surat\":null,\"tipe_surat\":\"Surat Masuk\",\"perihal\":\"Pengajuan\",\"tanggal_surat\":\"2024-12-05\",\"url\":\"http:\\/\\/127.0.0.1:8000\\/staff\\/surat-masuk\\/13\\/show\"}', '2024-12-05 19:12:33', '2024-12-05 19:00:25', '2024-12-05 19:12:33');
-
 -- --------------------------------------------------------
 
 --
@@ -160,13 +141,6 @@ CREATE TABLE `outgoing_mails` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `outgoing_mails`
---
-
-INSERT INTO `outgoing_mails` (`id`, `no_surat`, `tanggal_surat`, `tujuan`, `perihal`, `isi_singkat`, `lampiran`, `sifat_surat`, `file_surat`, `status`, `catatan`, `created_at`, `updated_at`) VALUES
-(14, '420/C/230.242/2024', '2024-12-07', 'UPT Kecamatan Ganding', 'Pengadaan', 'Pengadaan lomba kecamatan per SD', 0, 'Biasa', 'public/surat-keluar/MxrTtmObVY371gFvfaatTv3S6PxXDnOTBf6biF3C.pdf', 4, 'Bagus langsung segera kirim', '2024-12-06 20:16:39', '2024-12-06 20:24:30');
 
 -- --------------------------------------------------------
 
@@ -227,12 +201,19 @@ INSERT INTO `users` (`id`, `name`, `email`, `role`, `nip`, `email_verified_at`, 
 (2, 'Staff TU', 'staff_tu@gmail.com', 'staff', '19841208 200308 2 001', NULL, '$2a$12$tj3nVW.PX1dkHuVeFhx7WuDhvU1DDOCVmgcHtr8dcf055zfirCemu', NULL, NULL, '2022-01-03 00:21:03', '2024-12-07 06:19:56'),
 (3, 'Guru', 'guru@gmail.com', 'guru', '19831108 199608 2 003', NULL, '$2a$12$GoYFbrpsr5tpJxuX1wCKI.PQ17iEQDunZFLFyv2wzYu5cbMJhlgk2', NULL, NULL, '2022-01-03 00:21:03', '2024-12-07 06:18:37'),
 (4, 'Kepala Sekolah', 'kepsek@gmail.com', 'kepsek', '19611230 198112 1 002', NULL, '$2a$12$hzousWiGg/8b7CD38Bz/TuGUSoN582z04Dzn35g4Dh5PRHq9hM/4y', NULL, NULL, '2022-01-03 00:21:03', '2024-12-07 07:52:18'),
-(5, 'testing', 'testing@gmail.com', 'admin', '20030805 202108 2 003', NULL, '$2y$10$i7WaCoHixFthCsQ3YiCWFeeb.B2RJzcZzAY4cCLUqXXBSaMmk5zKy', NULL, NULL, '2024-10-13 10:06:04', '2024-12-07 06:20:31'),
 (6, 'Syafarian', 'syafarian@gmail.com', 'guru', '20020802 202008 1 014', NULL, '$2y$10$bzQPhl9l.TrM5UZamW86Ou2j/pUYr2Esuo4n.dq/LPdgbFBqg37kS', 'public/profile-images/RCnLzWp1TDkxqbxNRkUnUDa54uKPAPhOV7bR7jhX.jpg', NULL, '2024-11-08 07:28:31', '2024-12-07 08:21:54');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `disposisi_mails`
+--
+ALTER TABLE `disposisi_mails`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_surat_masuk` (`id_surat_masuk`),
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `failed_jobs`
@@ -292,6 +273,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `disposisi_mails`
+--
+ALTER TABLE `disposisi_mails`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `failed_jobs`
 --
 ALTER TABLE `failed_jobs`
@@ -301,7 +288,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `incoming_mails`
 --
 ALTER TABLE `incoming_mails`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `migrations`
@@ -326,6 +313,17 @@ ALTER TABLE `personal_access_tokens`
 --
 ALTER TABLE `users`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `disposisi_mails`
+--
+ALTER TABLE `disposisi_mails`
+  ADD CONSTRAINT `disposisi_mails_ibfk_1` FOREIGN KEY (`id_surat_masuk`) REFERENCES `incoming_mails` (`id`),
+  ADD CONSTRAINT `disposisi_mails_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

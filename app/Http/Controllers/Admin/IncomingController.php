@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Notifications\SuratMasukNotification;
 use Illuminate\Http\Request;
+use App\Models\Disposisi;
 use App\Models\Incoming;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -46,9 +47,7 @@ class IncomingController extends Controller
         }
 
         $validatedData['status'] = '1';
-        $validatedData['tujuan_disposisi'] = '';
         $validatedData['catatan_disposisi'] = '';
-        $validatedData['isi_disposisi'] = '';
         $validatedData['status_disposisi'] = '0';
 
         $surat = Incoming::create($validatedData);
@@ -64,6 +63,7 @@ class IncomingController extends Controller
 
     public function incoming_mail()
     {
+        
         // dd(Auth::id()); // Cek data pengguna yang sedang login
         if (request()->ajax()) {
             // Cek role user
@@ -82,11 +82,14 @@ class IncomingController extends Controller
                 ->latest()
                 ->get();
             } elseif ($userRole == 'guru') {
-                $query = Incoming::whereJsonContains('tujuan_disposisi', (string)$userId)
-                ->where('status', '3')  // Harus status 3 
-                ->where('status_disposisi', '!=', '3')
-                 ->latest()
-                 ->get();
+                $userId = Auth::id();
+                 // Ambil ID pengguna yang sedang login
+                $query = Incoming::join('disposisi_mails', 'disposisi_mails.id_surat_masuk', '=', 'incoming_mails.id') // Join tabel disposisi
+                ->where('disposisi_mails.user_id', $userId) // Ambil sesuai id_user di tabel disposisi
+                ->where('incoming_mails.status', '3') // Filter status di tabel incoming
+                ->select('incoming_mails.*', 'disposisi_mails.status_dibaca as status_dibaca') // Pilih kolom yang dibutuhkan
+                ->latest()
+                ->get();
             } else {
                 // Untuk role lain (admin, staff, dll), tampilkan semua data
                 $query = Incoming::where('status_disposisi', '!=', '3')->latest()->get();
@@ -121,17 +124,20 @@ class IncomingController extends Controller
                                 break;
                             case '1':
                                 // Cek apakah user adalah guru
-                                if ($userRole == 'guru') {
+                                if ($userRole == 'guru' && $item->status_dibaca == 0) {
                                     $statusText = '<span class="badge bg-warning"><i class="fas fa-envelope"></i>&nbsp;Surat Belum Dibaca</span>';
+                                } elseif ($userRole == 'guru' && $item->status_dibaca == 1) {
+                                    $statusText = '<span class="badge bg-success"><i class="fas fa-envelope"></i>&nbsp;Surat Sudah Dibaca</span>';
                                 } else {
                                     $statusText = '<span class="badge bg-success"><i class="fas fa-check"></i>&nbsp;Selesai Disposisi</span>';
                                 }
                                 break;
-                            case '2':
-                                if ($userRole == 'guru') {
-                                    $statusText = '<span class="badge bg-success"><i class="fas fa-envelope"></i>&nbsp;Surat Sudah Dibaca</span>';
+                            case '3':
+                                // Cek apakah user adalah guru
+                                if ($userRole == 'guru' && $item->status_dibaca == 0) {
+                                    $statusText = '<span class="badge bg-warning"><i class="fas fa-envelope"></i>&nbsp;Surat Belum Dibaca</span>';
                                 } else {
-                                    $statusText = '<span class="badge bg-success"><i class="fas fa-check"></i>&nbsp;Selesai Disposisi</span>';
+                                $statusText = '<span class="badge bg-secondary"><i class="fas fa-archive"></i> &nbsp;Surat telah diarsipkan</span>';
                                 }
                                 break;
                             default:
@@ -171,7 +177,14 @@ class IncomingController extends Controller
                         <a class="btn btn-success btn-xs" href="' . url($prefix . '/surat-masuk/' . $item->id . '/show') . '">
                             <i class="fa fa-search-plus"></i> &nbsp; Detail
                         </a>';
-
+                    // Tampilkan tombol "Arsipkan" hanya jika status_disposisi = 2
+                    if ($item->status == '3' && auth()->user()->role == 'admin') {
+                        $buttons .= '
+                            <a class="btn btn-secondary btn-xs" href="' . url('admin/surat-masuk/' . $item->id . '/arsipkan') . '">
+                                <i class="fa fa-archive"></i> &nbsp; Arsipkan
+                            </a>
+                        ';
+                    } 
                     // Tampilkan tombol "Ubah" dan "Hapus" hanya jika role pengguna adalah "admin" atau "staff administrasi"
                     // if (in_array($item->status, [0, 1,2]) 
                     //     && (in_array($item->status_disposisi, [0, -1]))
@@ -204,7 +217,7 @@ class IncomingController extends Controller
     public function show_incoming($id)
     {
         // dd($id);
-        $item = Incoming::findOrFail($id);
+        $item = Incoming::with('disposisi')->find($id);
         // Ambil semua pengguna dengan role 'guru'
         $guru = User::where('role', 'guru')->get();
         
@@ -318,13 +331,22 @@ class IncomingController extends Controller
         // Temukan surat berdasarkan ID
         $incomingMail = Incoming::findOrFail($id);
         // Simpan tujuan disposisi dan catatan
-        $incomingMail->tujuan_disposisi = json_encode($request->input('tujuan_disposisi'));
         $incomingMail->catatan_disposisi = $request->input('catatan_disposisi');
         $incomingMail->status_disposisi = 1 ;
-
         // Simpan perubahan ke database
         $incomingMail->save();
+        // Simpan tujuan disposisi di tabel disposisi
+        $tujuanDisposisi = $request->input('tujuan_disposisi');
 
+        // Tambahkan entri baru untuk masing-masing tujuan disposisi
+        foreach ($tujuanDisposisi as $idUser) {
+            Disposisi::firstOrCreate([
+                'id_surat_masuk' => $incomingMail->id,
+                'user_id' => $idUser,
+                'status_dibaca' => '0',
+                'tanggapan' =>  ''
+            ]);
+        }
         // Redirect dengan pesan sukses
         return redirect()
             ->to('/' . auth()->user()->role . '/surat-masuk')
@@ -362,8 +384,8 @@ class IncomingController extends Controller
         // Simpan perubahan
         $incomingMail->save();
 
-        // Ambil daftar guru dari tujuan disposisi
-        $guruIds = json_decode($incomingMail->tujuan_disposisi);
+        // Ambil daftar id_user dari tabel disposisi berdasarkan id surat
+        $guruIds = Disposisi::where('id_surat_masuk', $incomingMail->id)->pluck('user_id');
 
         // Kirim notifikasi ke setiap guru
         foreach ($guruIds as $guruId) {
@@ -383,13 +405,18 @@ class IncomingController extends Controller
          $request->validate([
             'isi_disposisi' => 'required|string|max:255',
         ]);
-        $incomingMail = Incoming::findOrFail($id);
-        $incomingMail->isi_disposisi = $request->input('isi_disposisi');
-        // Ubah status_disposisi sesuai kebutuhan (misalnya menjadi 2 jika disposisi diteruskan)
-        $incomingMail->status_disposisi = 2;
+        // Temukan record di tabel disposisi berdasarkan id_surat_masuk dan user_id
+        $disposisi = Disposisi::where('id_surat_masuk', $id)
+        ->where('user_id', auth()->id()) // Sesuaikan dengan user yang sedang login
+        ->firstOrFail();
 
+        // Simpan tanggapan ke tabel disposisi
+        $disposisi->tanggapan = $request->input('isi_disposisi');
+
+        // Ubah status_disposisi jika diperlukan (misalnya, menjadi 2 untuk status "Sudah Diterima")
+        $disposisi->status_dibaca = 1;
         // Simpan perubahan
-        $incomingMail->save();
+        $disposisi->save();
 
         return redirect()
             ->to('/' . auth()->user()->role . '/surat-masuk')

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Disposisi;
 use App\Models\Incoming;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -12,24 +13,29 @@ class DisposisiController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $query = Incoming::where(function ($query) {
-                $query->where('status', '3')
-                      ->whereIn('status_disposisi', [1, 2,3]);
-            })
+            $query = Incoming::join('disposisi_mails', 'disposisi_mails.id_surat_masuk', '=', 'incoming_mails.id')
+            ->join('users', 'disposisi_mails.user_id', '=', 'users.id') // Join users // Join tabel disposisi
+            ->where('incoming_mails.status', '3') // Filter status di incoming
+            ->whereIn('disposisi_mails.status_dibaca', [0,1]) // Filter status_disposisi di disposisi
+            ->select('incoming_mails.*', 'disposisi_mails.status_dibaca as status_dibaca'
+                        , 'disposisi_mails.user_id as user'
+                        , 'users.name as name' // Nama user dari tabel users
+                        , 'disposisi_mails.tanggapan as tanggapan') // Ambil kolom yang dibutuhkan
             ->latest()
             ->get();
+                
             return Datatables::of($query)
                 ->addColumn('status', function ($item) {
                     $statusText = '';
                     // Cek status_disposisi untuk menampilkan teks status yang sesuai
-                    switch ($item->status_disposisi) {
-                        case '1':
+                    switch ($item->status_dibaca) {
+                        case '0':
                             $statusText = '<span class="badge bg-info"><i class="fa fa-spinner"></i> &nbsp;Menunggu surat dibaca</span>';
                             break;
-                        case '2':
+                        case '1':
                             $statusText = '<span class="badge bg-success"><i class="fas fa-check"></i> &nbsp;Surat telah dibaca</span>';
                             break;
-                        case '3':
+                        case '2':
                             $statusText = '<span class="badge bg-warning"><i class="fas fa-check"></i> &nbsp;Surat telah dibaca dan diarsipkan</span>';
                             break;
                         default:
@@ -43,20 +49,12 @@ class DisposisiController extends Controller
                 ->addColumn('action', function ($item) {
                     $buttons = '';
         
-                    // Tampilkan tombol "Arsipkan" hanya jika status_disposisi = 2
-                    if ($item->status_disposisi == '2') {
-                        $buttons .= '
-                            <a class="btn btn-secondary btn-xs" href="' . url('admin/surat-masuk/' . $item->id . '/arsipkan') . '">
-                                <i class="fa fa-archive"></i> &nbsp; Arsipkan
+                    $buttons .= '
+                            <a class="btn btn-success btn-xs" href="' . url('admin/surat-masuk/' . $item->id . '/show') . '">
+                                <i class="fa fa-search-plus"></i> &nbsp; Detail
                             </a>
                         ';
-                    } else {
-                        $buttons .= '
-                            <button class="btn btn-secondary btn-xs" disabled onclick="alert(\'Surat harus dibaca sebelum dapat diarsipkan.\')">
-                                <i class="fa fa-archive"></i> &nbsp; Arsipkan
-                            </button>
-                        ';
-                    }
+                    
 
                     return $buttons;
                 })
@@ -80,7 +78,7 @@ class DisposisiController extends Controller
         $incomingMail->save();
 
         return redirect()
-            ->to('/' . auth()->user()->role . '/disposisi')
+            ->to('/' . auth()->user()->role . '/surat-masuk')
             ->with('success', 'Surat sudah diarsipkan');
     }
     public function create()

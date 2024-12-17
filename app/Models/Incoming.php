@@ -22,13 +22,14 @@ class Incoming extends Model
         'sifat_surat',
         'file_surat',
         'status',
-        'tujuan_disposisi',
         'catatan_disposisi',
-        'isi_disposisi',
         'status_disposisi'
     ];
 
     protected $hidden = [];
 
-    
+    public function disposisi()
+    {
+        return $this->hasMany(Disposisi::class, 'id_surat_masuk');
+    }
 }

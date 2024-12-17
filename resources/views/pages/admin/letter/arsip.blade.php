@@ -38,7 +38,7 @@
                 <div class="col-md-4">
                     <label for="jenis_surat" class="form-label">Jenis Surat</label>
                     <select name="jenis_surat" id="jenis_surat" class="form-select">
-                        <option value="">Semua</option>
+                        <option value="">Pilih Jenis Surat</option>
                         <option value="masuk" {{ request('jenis_surat') == 'masuk' ? 'selected' : '' }}>Surat Masuk</option>
                         <option value="keluar" {{ request('jenis_surat') == 'keluar' ? 'selected' : '' }}>Surat Keluar</option>
                     </select>

@@ -80,10 +80,13 @@ Route::prefix('admin')->middleware('authAdmin')->group(function () {
     //arsip
     Route::get('/arsip', [ArsipController::class, 'index']);
     //user
-    Route::resource('/user', UserController::class);
-    // Route::resource('/setting', SettingController::class, [
-    //     'except' => ['show']
-    // ]);
+    Route::get('/user', [UserController::class, 'index']);
+    Route::get('/user/create', [UserController::class, 'create']);
+    Route::post('/user/store', [UserController::class, 'store']);
+    Route::get('/user/{id}/edit', [UserController::class, 'edit']);
+    Route::put('/user/{id}/update', [UserController::class, 'update']);
+    Route::delete('/user/{id}/destroy', [UserController::class, 'destroy']);
+
     Route::get('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::get('setting', [SettingController::class, 'index']);
     Route::put('/setting/update/{id}', [SettingController::class, 'update'])->name('update-profile');
@@ -114,7 +117,12 @@ Route::prefix('kepsek')->middleware('authKepsek')->group(function () {
     //arsip
     Route::get('/arsip', [ArsipController::class, 'index']);
     //user
-    Route::resource('user', UserController::class);
+    Route::get('/user', [UserController::class, 'index']);
+    Route::get('/user/create', [UserController::class, 'create']);
+    Route::post('/user/store', [UserController::class, 'store']);
+    Route::get('/user/{id}/edit', [UserController::class, 'edit']);
+    Route::put('/user/{id}/update', [UserController::class, 'update']);
+    Route::delete('/user/{id}/destroy', [UserController::class, 'destroy']);
     // Route::resource('setting', SettingController::class, [
     //     'except' => ['show']
     // ]);
@@ -146,7 +154,12 @@ Route::prefix('guru')->middleware('authGuru')->group(function () {
     //arsip
     Route::get('/arsip', [ArsipController::class, 'index']);
     //user
-    Route::resource('user', UserController::class);
+    Route::get('/user', [UserController::class, 'index']);
+    Route::get('/user/create', [UserController::class, 'create']);
+    Route::post('/user/store', [UserController::class, 'store']);
+    Route::get('/user/{id}/edit', [UserController::class, 'edit']);
+    Route::put('/user/{id}/update', [UserController::class, 'update']);
+    Route::delete('/user/{id}/destroy', [UserController::class, 'destroy']);
     // Route::resource('setting', SettingController::class, [
     //     'except' => ['show']
     // ]);
@@ -189,7 +202,12 @@ Route::prefix('staff')->middleware('authStaff')->group(function () {
     //arsip
     Route::get('/arsip', [ArsipController::class, 'index']);
     //user
-    Route::resource('user', UserController::class);
+    Route::get('/user', [UserController::class, 'index']);
+    Route::get('/user/create', [UserController::class, 'create']);
+    Route::post('/user/store', [UserController::class, 'store']);
+    Route::get('/user/{id}/edit', [UserController::class, 'edit']);
+    Route::put('/user/{id}/update', [UserController::class, 'update']);
+    Route::delete('/user/{id}/destroy', [UserController::class, 'destroy']);
     // Route::resource('setting', SettingController::class, [
     //     'except' => ['show']
     // ]);

@@ -53,10 +53,11 @@
                                     <tr>
                                         <th width="10">No.</th>
                                         <th>Status</th>
+                                        <th>Disposisikan ke-</th>
                                         <th>No. Surat</th>
                                         <th>Tanggal Surat</th>
-                                        <th>Pengirim</th>
-                                        <th>Perihal</th>
+                                        <th>Catatan</th>
+                                        <th>Tanggapan</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -86,10 +87,14 @@
             searchable: false
           },
           { data: 'status', name: 'status' },
+          { data: 'name', name: 'name' },
           { data: 'no_surat', name: 'no_surat' },
           { data: 'tanggal_surat', name: 'tanggal_surat' },
-          { data: 'pengirim', name: 'pengirim' },
-          { data: 'perihal', name: 'perihal' },
+          { data: 'catatan_disposisi', name: 'catatan_disposisi' },
+          { data: 'tanggapan', name: 'tanggapan', render: function(data, type, row) {
+            // Jika kolom tanggapan kosong, tampilkan "Belum ada tanggapan"
+            return data ? data : 'Belum ada tanggapan';
+        }},
           { 
             data: 'action', 
             name: 'action',

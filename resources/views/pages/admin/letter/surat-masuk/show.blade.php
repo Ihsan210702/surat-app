@@ -17,10 +17,10 @@
                             </h1>
                         </div>
                         <div class="col-12 col-xl-auto mb-3">
-                            <a class="btn btn-sm btn-light text-primary" href="{{ url(auth()->user()->role .'/surat-masuk') }}">
+                            <button class="btn btn-sm btn-light text-primary" onclick="javascript:window.history.back();">
                                 <i class="me-1" data-feather="arrow-left"></i>
                                 Kembali Ke Semua Surat
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -89,16 +89,11 @@
                                         <tr>
                                             <th id="disposisi">Disposisi</th>
                                             <td id="disposisiText">
-                                                @if ($item->tujuan_disposisi == '')
+                                                @if ($item->disposisi->isEmpty())
                                                     <i>Belum ada tujuan disposisi</i>
                                                 @else
-                                                    @php
-                                                        // Mendekode tujuan_disposisi ke dalam array
-                                                        $tujuanDisposisiIds = json_decode($item->tujuan_disposisi ?? '[]');
-                                                    @endphp
-
-                                                    {{-- Loop melalui $guru dan tampilkan nama jika ID ada dalam tujuan_disposisi --}}
-                                                    {{ implode(', ', $guru->whereIn('id', $tujuanDisposisiIds)->pluck('name')->toArray()) }}
+                                                    {{-- Tampilkan nama pengguna dari disposisi --}}
+                                                    {{ implode(', ', $item->disposisi->map(fn($d) => $d->user->name)->toArray()) }}
                                                 @endif
                                             </td>
                                         </tr>
@@ -168,17 +163,11 @@
                                             </td>
                                         </tr>
                                         @endif
-                                        <tr>
-                                            <th id="isi_disposisi">Isi Disposisi</th>
-                                            <td id="isi_disposisiText">
-                                                @if ($item->isi_disposisi == '')
-                                                    <i>Belum ada isi disposisi</i>
-                                                @else
-                                                    {{ $item->isi_disposisi }}
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        @if (auth()->user()->role == 'guru' && $item->status == '3' && $item->status_disposisi == '1')
+
+                                        @if (
+                                                (auth()->user()->role == 'guru' && $item->status == '3' && $item->status_disposisi == '1' && $item->disposisi->firstWhere('status_dibaca', '0')) ||
+                                                (auth()->user()->role == 'guru' && $item->status == '3' && $item->status_disposisi == '3' && $item->disposisi->firstWhere('status_dibaca', '0'))
+                                            )
                                         <tr>
                                             <th></th>
                                             <td>
@@ -249,8 +238,6 @@
         document.body.addEventListener('click', function(event) {
             // Cek jika tombol yang diklik adalah Terima Berkas
             if (event.target && event.target.id === 'terimaBtn') {
-                document.getElementById('isi_disposisi').style.display = 'none';
-                document.getElementById('isi_disposisiText').style.display = 'none';
                 document.getElementById('ini').style.display = 'table-row';  // Menampilkan form disposisi
             }
             // Cek jika tombol yang diklik adalah Disposisikan
