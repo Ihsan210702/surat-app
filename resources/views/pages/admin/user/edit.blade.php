@@ -44,7 +44,7 @@
                                     <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
                             @endif
-                            <form action="{{ url(auth()->user()->role . '/user/' . $item->id) }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ url(auth()->user()->role . '/user/' . $item->id . '/update') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
                                 <!-- Form Row-->

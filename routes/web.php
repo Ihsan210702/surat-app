@@ -88,6 +88,8 @@ Route::prefix('admin')->middleware('authAdmin')->group(function () {
     Route::delete('/user/{id}/destroy', [UserController::class, 'destroy']);
 
     Route::get('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    // Route untuk menandai semua notifikasi telah dibaca
+    Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('markAllAsRead');
     Route::get('setting', [SettingController::class, 'index']);
     Route::put('/setting/update/{id}', [SettingController::class, 'update'])->name('update-profile');
     Route::get('/setting/password', [SettingController::class, 'change_password'])->name('change-password');
@@ -127,6 +129,8 @@ Route::prefix('kepsek')->middleware('authKepsek')->group(function () {
     //     'except' => ['show']
     // ]);
     Route::get('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    // Route untuk menandai semua notifikasi telah dibaca
+    Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('markAllAsRead');
     Route::get('setting', [SettingController::class, 'index']);
     Route::put('/setting/update/{id}', [SettingController::class, 'update'])->name('update-profile');
     Route::get('setting/password', [SettingController::class, 'change_password'])->name('change-password');
@@ -164,6 +168,8 @@ Route::prefix('guru')->middleware('authGuru')->group(function () {
     //     'except' => ['show']
     // ]);
     Route::get('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    // Route untuk menandai semua notifikasi telah dibaca
+    Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('markAllAsRead');
     Route::get('setting', [SettingController::class, 'index']);
     Route::put('/setting/update/{id}', [SettingController::class, 'update'])->name('update-profile');
     Route::get('setting/password', [SettingController::class, 'change_password'])->name('change-password');
@@ -213,6 +219,8 @@ Route::prefix('staff')->middleware('authStaff')->group(function () {
     // ]);
     Route::get('setting', [SettingController::class, 'index']);
     Route::get('/notifications/read/{id}', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    // Route untuk menandai semua notifikasi telah dibaca
+    Route::post('/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('markAllAsRead');
     Route::put('/setting/update/{id}', [SettingController::class, 'update'])->name('update-profile');
     Route::get('setting/password', [SettingController::class, 'change_password'])->name('change-password');
     Route::post('setting/upload-profile', [SettingController::class, 'upload_profile'])->name('profile-upload');

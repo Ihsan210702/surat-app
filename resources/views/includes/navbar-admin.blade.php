@@ -41,7 +41,7 @@
                             <div class="dropdown-item notification-item px-3 py-2 border-bottom">
                                 <div class="d-flex align-items-center mb-1">
                                     <div class="notification-content flex-grow-1">
-                                        <a href="{{ route('notifications.read', $notification->id) }}" class="text-decoration-none text-dark">
+                                        <a href="{{ url(auth()->user()->role . '/notifications/read/' . $notification->id) }}" class="text-decoration-none text-dark">
                                             <div class="d-flex justify-content-between">
                                                 <span class="fw-bold">{{ data_get($notification->data, 'tipe_surat', 'Tidak Diketahui') }}</span>
                                                 <small class="text-muted">
@@ -60,10 +60,13 @@
                             </div>
                         @endforeach
                         <div class="dropdown-footer bg-light p-2 text-center">
-                    <button class="btn btn-sm btn-primary w-100 mark-all-read" data-action="/mark-all-read">
-                        <i class="bi bi-check2-all me-1"></i> Tandai Semua Telah Dibaca
-                    </button>
-                </div>
+                            <form method="POST" action="{{ url(auth()->user()->role . '/mark-all-read') }}">
+                                @csrf
+                                <button class="btn btn-sm btn-primary w-100" type="submit">
+                                    <i class="bi bi-check2-all me-1"></i> Tandai Semua Telah Dibaca
+                                </button>
+                            </form>
+                        </div>
                     @else
                         <div class="dropdown-item px-3 py-2 text-center text-muted">
                             Tidak ada notifikasi baru

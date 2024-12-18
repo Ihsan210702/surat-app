@@ -17,10 +17,10 @@
                             </h1>
                         </div>
                         <div class="col-12 col-xl-auto mb-3">
-                            <button class="btn btn-sm btn-light text-primary" onclick="javascript:window.history.back();">
+                            <a class="btn btn-sm btn-light text-primary" href="{{ url(auth()->user()->role.'/surat-masuk') }}">
                                 <i class="me-1" data-feather="arrow-left"></i>
-                                Kembali Ke Semua Surat
-                            </button>
+                                Kembali ke Semua Surat
+                            </a>
                         </div>
                     </div>
                 </div>

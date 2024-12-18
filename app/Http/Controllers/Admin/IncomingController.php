@@ -347,6 +347,11 @@ class IncomingController extends Controller
                 'tanggapan' =>  ''
             ]);
         }
+        // Notifikasi ke admin
+        $admin = User::where('role', 'admin')->first();
+        if ($admin) {
+            $admin->notify(new SuratMasukNotification($incomingMail));
+        }
         // Redirect dengan pesan sukses
         return redirect()
             ->to('/' . auth()->user()->role . '/surat-masuk')
@@ -368,7 +373,11 @@ class IncomingController extends Controller
 
         // Simpan perubahan ke database
         $incomingMail->save();
-
+        // Kirim notifikasi ke semua user
+        $users = User::whereIn('role', ['admin', 'staff'])->get(); // Hanya user dengan role tertentu
+        foreach ($users as $user) {
+            $user->notify(new SuratMasukNotification($incomingMail));
+        }
         // Redirect dengan pesan sukses
         return redirect()
             ->to('/' . auth()->user()->role . '/surat-masuk')

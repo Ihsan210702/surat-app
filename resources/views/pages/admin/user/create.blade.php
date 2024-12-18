@@ -45,7 +45,7 @@
                                         aria-label="Close"></button>
                                 </div>
                             @endif
-                            <form action="{{ url(auth()->user()->role . '/user') }}" method="POST" enctype="multipart/form-data">
+                            <form action="{{ url(auth()->user()->role . '/user/store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf
                                 <!-- Form Row-->
                                 <div class="row gx-3 mb-3">
@@ -55,6 +55,19 @@
                                         <input class="form-control @error('name') is-invalid @enderror" name="name"
                                             type="text" value="{{ old('name') }}" required autofocus />
                                         @error('name')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="row gx-3 mb-3">
+                                    <!-- Form Group (nip)-->
+                                    <div class="col-md-6">
+                                        <label class="small mb-1" for="nip">NIP</label>
+                                        <input class="form-control @error('nip') is-invalid @enderror" name="nip"
+                                            type="text" value="{{ old('nip') }}" required autofocus />
+                                        @error('nip')
                                             <div class="invalid-feedback">
                                                 {{ $message }}
                                             </div>
@@ -97,14 +110,14 @@
                                             <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>
                                                 Administrator
                                             </option>
-                                            <option value="staff administrasi"
-                                                {{ old('role') == 'staff administrasi' ? 'selected' : '' }}>Staff
+                                            <option value="staff"
+                                                {{ old('role') == 'staff' ? 'selected' : '' }}>Staff
                                                 Administrasi
                                             </option>
                                             <option value="guru" {{ old('role') == 'guru' ? 'selected' : '' }}>Guru
                                             </option>
-                                            <option value="kepala sekolah"
-                                                {{ old('role') == 'kepala sekolah' ? 'selected' : '' }}>Kepala Sekolah
+                                            <option value="kepsek"
+                                                {{ old('role') == 'kepsek' ? 'selected' : '' }}>Kepala Sekolah
                                             </option>
                                         </select>
                                     </div>
